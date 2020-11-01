@@ -1,0 +1,22 @@
+{
+	"manifest_version": 2,
+
+	"name": "Codename - Potato",
+	"developer": {
+		"name": "Karol Laskowski",
+		"url": "https://codebake.dev/"
+	},
+	"description": "Extension to manage your time and block sites to improve your focus ability",
+	"version": "0.05",
+	"background": {
+		"scripts": ["background.js"]
+	},
+	"homepage_url": "https://potato.codebake.dev/",
+	"permissions": ["tabs"],
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_title": "Codename - Potato",
+		"default_popup": "popup.html"
+	},
+	"options_page": "config.html"
+}
