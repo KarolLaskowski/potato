@@ -29,49 +29,43 @@ const potatoModule = (function () {
 		return 0;
 	}
 
-	function findNotMatchingRules(rules, address) {
-		return rules.filter(rule => !address.match(rule.regex));
-	}
-
 	function findMatchingRules(rules, address) {
 		return rules.filter(rule => address.match(rule.regex));
 	}
 
-	function findAndSortMatchingRules(rules, address) {
-		const matchingRules = findMatchingRules(rules, address);
-		return matchingRules.sort(sortRulesByTimeAllowed);
-	}
-
-	function finishRules(rulesToFinish, finishTime) {
-		rulesToFinish.forEach(rule => {
-			const usesToClose = rule.uses.filter(use => use.from && !use.to);
-			usesToClose.forEach(use => { use.to = finishTime; });
-			console.log(`closed use from ${rule.regex}`);
-		});
-
-	}
-
-	function startRules(rulesToStart, startTime) {
-		rulesToStart.forEach(rule => {
-			rule.uses.push({ from: startTime, to: null });
-			console.log(`added use to ${rule.regex}`);
+	function finishAllPageUses(pages, finishTime) {
+		const domains = Object.keys(pages);
+		domains.forEach(domain => {
+			pages[domain].uses.forEach(use => { if (!use.to) { use.to = finishTime; }});
 		});
 	}
 
-	function finishNotMatchingRules(rules, address, tabSwitchedTime) {
-		const notMatchingRules = findNotMatchingRules(rules, address);
-		finishRules(notMatchingRules, tabSwitchedTime);
+	function startPageUse(page, startTime) {
+		if (!!page) {
+			page.uses.push({ from: startTime, to: null });
+		}
 	}
 
-	function startMatchingRules(rules, address, tabSwitchedTime) {
-		const matchingRules = findAndSortMatchingRules(rules, address);
-		startRules(matchingRules, tabSwitchedTime);
+	function anyRulesMatchAddress(rules, address) {
+		rules.some(rule => address.match(rule.regex));
+	}
+
+	function addPage(pages, domain) {
+		pages[domain] = {
+			uses: [],
+		};
+		return pages[domain];
+	}
+
+	function startMatchingPageUses(pages, domain, tabSwitchedTime) {
+		const page = addUrlToPagesAndGetPage(pages, domain);
+		startPageUse(page, tabSwitchedTime);
 	}
 	
-	function startAndFinishRules(rules, address){
+	function startAndFinishPageUses(pages, address){
 		const tabSwitchedTime = new Date();
-		finishNotMatchingRules(rules, address, tabSwitchedTime);
-		startMatchingRules(rules, address, tabSwitchedTime);
+		finishAllPageUses(pages, tabSwitchedTime);
+		startMatchingPageUses(pages, address, tabSwitchedTime);
 	}
 	
 	function setBadge(badgePayload) {
@@ -101,12 +95,20 @@ const potatoModule = (function () {
 		return resetBadgeIntervalTimer(badgeRefreshInterval, indexSeconds);
 	}
 
+	function processChangeOfTab(selectedTab) {
+		const address = selectedTab.url;
+		startAndFinishPageUses(pages, rules, address);
+		badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
+	}
+
 	function onTabActivated(activeInfo) {
 		chrome.tabs.get(activeInfo.tabId, (selectedTab) => {
-			const address = selectedTab.url;
-			startAndFinishRules(rules, address);
-			badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
+			processChangeOfTab(selectedTab);
 		});
+	}
+
+	function onTabUpdated(tabId, changeInfo, tab) {
+		processChangeOfTab(tab);
 	}
 
 	function domainFromUrl(url) {
@@ -118,11 +120,47 @@ const potatoModule = (function () {
 						result = match[1]
 				}
 		}
-		return result
+		return result;
+	}
+
+	function getPageSpentTime(domain) {
+		return pages[domain].uses.reduce((total, useObj) => { total + (useObj.to || new Date()) - useObj.from });
+	}
+
+	function getHistoryTable() {
+		const domains = Object.keys(pages);
+		console.table(domains.flatMap(domain => pages[domain].uses));
+	}
+
+	function isDomainValid(domain) {
+		return !!domain && domain.includes('.');
+	}
+
+	function addUrlToPagesAndGetPage(pages, domain) {
+		let page = null;
+		if (isDomainValid(domain)) {
+			page = pages[domain];
+			if (!page) {
+				page = addPage(pages, domain);
+			}
+		}
+		return page;
+	}
+
+	function initExistingTabs(tabs) {
+		tabs.forEach(tab => {
+			const domain = domainFromUrl(tab.url);
+			const page = addUrlToPagesAndGetPage(pages, domain);
+			if (!!page && tab.selected) {
+				const currentTime = new Date();
+				startPageUse(page, currentTime);
+			}
+		});
 	}
 
 	function init() {
 		chrome.tabs.onActivated.addListener(onTabActivated);
+		chrome.tabs.onUpdated.addListener(onTabUpdated);
 
 		chrome.browserAction.setBadgeBackgroundColor({
 			color: badgeColors.Unblocked,
@@ -133,14 +171,7 @@ const potatoModule = (function () {
 		chrome.tabs.query({
 			currentWindow: true,
 		}, (tabs) => {
-			tabs.forEach(tab => {
-				const domainUrl = domainFromUrl(tab.url);
-				if (!pages[domainUrl]) {
-					pages[domainUrl] = {
-						uses: [],
-					};
-				}
-			});
+			initExistingTabs(tabs);
 		});
 	}
 
@@ -150,5 +181,7 @@ const potatoModule = (function () {
 		Rules: rules,
 		Pages: pages,
 		IndexSeconds: indexSeconds,
+		GetHistoryTable: getHistoryTable,
+		GetPageSpentTime: getPageSpentTime,
 	};
 })();
