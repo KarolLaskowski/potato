@@ -33,10 +33,17 @@ const potatoModule = (function () {
 		return rules.filter(rule => address.match(rule.regex));
 	}
 
+	function finishSingleUse(finishTime, use) {
+		if (!use.to) {
+			use.to = finishTime;
+			use.sum = use.to - use.from;
+		}
+	}
+
 	function finishAllPageUses(pages, finishTime) {
 		const domains = Object.keys(pages);
 		domains.forEach(domain => {
-			pages[domain].uses.forEach(use => { if (!use.to) { use.to = finishTime; }});
+			pages[domain].uses.forEach(finishSingleUse.bind(null, finishTime));
 		});
 	}
 
@@ -62,10 +69,10 @@ const potatoModule = (function () {
 		startPageUse(page, tabSwitchedTime);
 	}
 	
-	function startAndFinishPageUses(pages, address){
+	function startAndFinishPageUses(pages, domain){
 		const tabSwitchedTime = new Date();
 		finishAllPageUses(pages, tabSwitchedTime);
-		startMatchingPageUses(pages, address, tabSwitchedTime);
+		startMatchingPageUses(pages, domain, tabSwitchedTime);
 	}
 	
 	function setBadge(badgePayload) {
@@ -96,8 +103,8 @@ const potatoModule = (function () {
 	}
 
 	function processChangeOfTab(selectedTab) {
-		const address = selectedTab.url;
-		startAndFinishPageUses(pages, rules, address);
+		const domain = domainFromUrl(selectedTab.url);
+		startAndFinishPageUses(pages, domain);
 		badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
 	}
 
@@ -124,7 +131,13 @@ const potatoModule = (function () {
 	}
 
 	function getPageSpentTime(domain) {
-		return pages[domain].uses.reduce((total, useObj) => { total + (useObj.to || new Date()) - useObj.from });
+		if (isDomainValid(domain) && !!pages[domain] && !!pages[domain].uses.length) {
+			const reducingTimes = (a, b) => {
+				return a + (!!b.to ? b.sum : new Date() - b.from);
+			};
+			return new Date(pages[domain].uses.reduce(reducingTimes, 0));
+		}
+		return 0;
 	}
 
 	function getHistoryTable() {
