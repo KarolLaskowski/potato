@@ -16,7 +16,7 @@ const potatoModule = (function () {
 		regex: /wykop.pl/g,
 		timeAllowed: new Date(0, 0, 0, 0, 15, 0, 0),
 		active: true,
-		uses: [],
+		visits: [],
 	});
 
 	function sortRulesByTimeAllowed(a, b) {
@@ -33,23 +33,23 @@ const potatoModule = (function () {
 		return rules.filter(rule => address.match(rule.regex));
 	}
 
-	function finishSingleUse(finishTime, use) {
-		if (!use.to) {
-			use.to = finishTime;
-			use.sum = use.to - use.from;
+	function finishSingleVisit(finishTime, visit) {
+		if (!visit.to) {
+			visit.to = finishTime;
+			visit.sum = visit.to - visit.from;
 		}
 	}
 
-	function finishAllPageUses(pages, finishTime) {
+	function finishAllPageVisits(pages, finishTime) {
 		const domains = Object.keys(pages);
 		domains.forEach(domain => {
-			pages[domain].uses.forEach(finishSingleUse.bind(null, finishTime));
+			pages[domain].visits.forEach(finishSingleVisit.bind(null, finishTime));
 		});
 	}
 
-	function startPageUse(page, startTime) {
+	function startPageVisit(page, startTime, type, tabIndex) {
 		if (!!page) {
-			page.uses.push({ from: startTime, to: null });
+			page.visits.push({ from: startTime, to: null, type: type, tabIndex: tabIndex });
 		}
 	}
 
@@ -59,20 +59,20 @@ const potatoModule = (function () {
 
 	function addPage(pages, domain) {
 		pages[domain] = {
-			uses: [],
+			visits: [],
 		};
 		return pages[domain];
 	}
 
-	function startMatchingPageUses(pages, domain, tabSwitchedTime) {
+	function startMatchingPageVisits(pages, domain, tabSwitchedTime, type, tabIndex) {
 		const page = addUrlToPagesAndGetPage(pages, domain);
-		startPageUse(page, tabSwitchedTime);
+		startPageVisit(page, tabSwitchedTime, type, tabIndex);
 	}
 	
-	function startAndFinishPageUses(pages, domain){
+	function startAndFinishPageVisits(pages, domain, type, tabIndex) {
 		const tabSwitchedTime = new Date();
-		finishAllPageUses(pages, tabSwitchedTime);
-		startMatchingPageUses(pages, domain, tabSwitchedTime);
+		finishAllPageVisits(pages, tabSwitchedTime);
+		startMatchingPageVisits(pages, domain, tabSwitchedTime, type, tabIndex);
 	}
 	
 	function setBadge(badgePayload) {
@@ -104,7 +104,10 @@ const potatoModule = (function () {
 
 	function processChangeOfTab(selectedTab) {
 		const domain = domainFromUrl(selectedTab.url);
-		startAndFinishPageUses(pages, domain);
+		const tabId = selectedTab.id;
+		const status = selectedTab.status;
+		const tabIndex = selectedTab.index;
+		startAndFinishPageVisits(pages, domain, status, tabIndex);
 		badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
 	}
 
@@ -131,18 +134,18 @@ const potatoModule = (function () {
 	}
 
 	function getPageSpentTime(domain) {
-		if (isDomainValid(domain) && !!pages[domain] && !!pages[domain].uses.length) {
+		if (isDomainValid(domain) && !!pages[domain] && !!pages[domain].visits.length) {
 			const reducingTimes = (a, b) => {
 				return a + (!!b.to ? b.sum : new Date() - b.from);
 			};
-			return new Date(pages[domain].uses.reduce(reducingTimes, 0));
+			return new Date(pages[domain].visits.reduce(reducingTimes, 0));
 		}
 		return 0;
 	}
 
 	function getHistoryTable() {
 		const domains = Object.keys(pages);
-		console.table(domains.flatMap(domain => pages[domain].uses));
+		console.table(domains.flatMap(domain => pages[domain].visits));
 	}
 
 	function isDomainValid(domain) {
@@ -166,7 +169,7 @@ const potatoModule = (function () {
 			const page = addUrlToPagesAndGetPage(pages, domain);
 			if (!!page && tab.selected) {
 				const currentTime = new Date();
-				startPageUse(page, currentTime);
+				startPageVisit(page, currentTime);
 			}
 		});
 	}
