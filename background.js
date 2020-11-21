@@ -1,8 +1,13 @@
 "use strict";
 const potatoModule = (function () {
-	const badgeColors = {
+	const BadgeColors = {
 		Unblocked: 'darkgreen',
 		Blocked: 'red',
+	};
+	const TabStatus = {
+		Unloaded: 'unloaded',
+		Loading: 'loading',
+		Complete: 'complete',
 	};
 	const badgeRefreshIntervalTimeInMs = 1000;
 
@@ -104,10 +109,8 @@ const potatoModule = (function () {
 
 	function processChangeOfTab(selectedTab) {
 		const domain = domainFromUrl(selectedTab.url);
-		const tabId = selectedTab.id;
 		const status = selectedTab.status;
-		const tabIndex = selectedTab.index;
-		startAndFinishPageVisits(pages, domain, status, tabIndex);
+		startAndFinishPageVisits(pages, domain, status);
 		badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
 	}
 
@@ -179,7 +182,7 @@ const potatoModule = (function () {
 		chrome.tabs.onUpdated.addListener(onTabUpdated);
 
 		chrome.browserAction.setBadgeBackgroundColor({
-			color: badgeColors.Unblocked,
+			color: BadgeColors.Unblocked,
 		});
 
 		badgeRefreshInterval = resetBadge(badgeRefreshInterval, indexSeconds);
