@@ -1,0 +1,29 @@
+{
+  "name": "potato",
+  "version": "0.0.6",
+  "description": "Simple Chrome/Opera extension to track the time you spent on each webpage",
+  "type": "module",
+  "main": "./src/js/background.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarolLaskowski/potato.git"
+  },
+  "keywords": [
+    "chrome",
+    "opera",
+    "track",
+    "time"
+  ],
+  "author": "Karol Laskowski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KarolLaskowski/potato/issues"
+  },
+  "homepage": "https://github.com/KarolLaskowski/potato#readme",
+  "devDependencies": {
+    "jest": "^26.6.3"
+  }
+}

@@ -2,6 +2,15 @@
 
 import Helpers from "./helpers.js";
 
+class PageVisit {
+  constructor(from, to, type, tabIndex) {
+    this.from = from;
+    this.to = to;
+    this.type = type;
+    this.tabIndex = tabIndex;
+  }
+}
+
 function addDomainAsPage(pages, domain) {
   pages[domain] = {
     visits: [],
@@ -61,6 +70,7 @@ function addPage(pages, domain) {
 }
 
 const Page = {
+  PageVisit,
   initPageVisits,
   addPage,
   finishAndStartPageVisits,
