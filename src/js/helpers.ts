@@ -15,7 +15,7 @@ function urlToDomain(url: string) {
 }
 
 function isDomainValid(domain: string) {
-  return !!domain && domain.includes(".");
+  return !!domain && !!domain.match(/^([a-z0-9]+\.)?([a-z0-9]+\.[a-z0-9]+)$/);
 }
 
 const Helpers = {
