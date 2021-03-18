@@ -1,5 +1,65 @@
 import Helpers from '../js/helpers';
 
+test('urlToDomain returns domain when given url', () => {
+  // arrange
+  const url = 'https://example.com/test?q=lol';
+  const expected = 'example.com';
+
+  //act
+  let result = Helpers.urlToDomain(url);
+
+  //assert
+  expect(result).toStrictEqual(expected);
+});
+
+test('urlToDomain returns same string when given valid domain with subdomain', () => {
+  // arrange
+  const url = 'subdomain.example.com';
+  const expected = url;
+
+  //act
+  let result = Helpers.urlToDomain(url);
+
+  //assert
+  expect(result).toStrictEqual(expected);
+});
+
+test('urlToDomain returns domain with subdomain when given url with subdomain', () => {
+  // arrange
+  const url = 'https://testing.example.com/test?q=lol';
+  const expected = 'testing.example.com';
+
+  //act
+  let result = Helpers.urlToDomain(url);
+
+  //assert
+  expect(result).toStrictEqual(expected);
+});
+
+test('urlToDomain throws exception when given empty string', () => {
+  // arrange
+  const url = '';
+
+  //act
+
+  //assert
+  expect(() => {
+    Helpers.urlToDomain(url);
+  }).toThrow(TypeError);
+});
+
+test('urlToDomain throws exception when given null', () => {
+  // arrange
+  let url: string = null;
+
+  //act
+
+  //assert
+  expect(() => {
+    Helpers.urlToDomain(url);
+  }).toThrow(TypeError);
+});
+
 test('isDomainValid returns false when given empty string', () => {
   // arrange
   const domain = '';
