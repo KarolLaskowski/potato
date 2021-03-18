@@ -1,12 +1,15 @@
-"use strict";
+import Consts from './consts';
 
-function setBadge(badgePayload) {
+function setBadge(badgePayload: any): void {
   chrome.browserAction.setBadgeText({
     text: `S: ${badgePayload.secondsCounter}`,
   });
 }
 
-function resetBadgeIntervalTimer(badgeRefreshInterval, secondsCounter) {
+function resetBadgeIntervalTimer(
+  badgeRefreshInterval: number,
+  secondsCounter: number
+): number {
   if (badgeRefreshInterval) {
     window.clearInterval(badgeRefreshInterval);
   }
@@ -15,11 +18,14 @@ function resetBadgeIntervalTimer(badgeRefreshInterval, secondsCounter) {
       secondsCounter: secondsCounter,
     });
     secondsCounter++;
-  }, 1000);
+  }, Consts.badgeRefreshIntervalTimeInMs);
   return badgeRefreshInterval;
 }
 
-function resetBadge(badgeRefreshInterval, indexSeconds) {
+function resetBadge(
+  badgeRefreshInterval: number,
+  indexSeconds: number
+): number {
   indexSeconds = 0;
   setBadge({
     secondsCounter: indexSeconds,
