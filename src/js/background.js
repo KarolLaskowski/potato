@@ -1,6 +1,6 @@
 'use strict';
 
-import { BadgeColors, TabStatus } from './enums.js';
+import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge.js';
 import Helpers from './helpers';
 import Consts from './consts.js';
