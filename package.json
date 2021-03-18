@@ -5,8 +5,8 @@
   "main": "./src/js/background.js",
   "scripts": {
     "test": "./node_modules/.bin/jest --coverage",
-    "build": "./node_modules/.bin/webpack --env NODE_ENV=development --mode development",
-    "prod": "./node_modules/.bin/webpack --env NODE_ENV=production --mode production"
+    "debug": "./node_modules/.bin/webpack --env NODE_ENV=development --mode development",
+    "build": "./node_modules/.bin/webpack --env NODE_ENV=production --mode production"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.10",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.13.10",
     "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^26.0.21",

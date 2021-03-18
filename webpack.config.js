@@ -1,24 +1,26 @@
-const path = require("path");
-const CopyPlugin = require("copy-webpack-plugin");
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const mode =
-  process.env.NODE_ENV === "production" ? "production" : "development";
+  process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 module.exports = {
   mode: mode,
-  entry: "./src/js/background.js",
+  target: 'node',
+  entry: './src/js/background.js',
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        use: "ts-loader",
+        use: 'ts-loader',
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
       },
     ],
@@ -26,17 +28,17 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "src/html", to: "html" },
-        { from: "src/img", to: "img" },
-        { from: "src/manifest.json", to: "manifest.json" },
+        { from: 'src/html', to: 'html' },
+        { from: 'src/img', to: 'img' },
+        { from: 'src/manifest.json', to: 'manifest.json' },
       ],
     }),
   ],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
   },
   output: {
-    filename: "./js/background.js",
-    path: path.resolve(__dirname, "build"),
+    filename: './js/background.js',
+    path: path.resolve(__dirname, 'build'),
   },
 };

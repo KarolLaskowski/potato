@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
-import { BadgeColors, TabStatus } from "./enums.js";
-import Badge from "./badge.js";
-import Helpers from "./helpers.ts";
-import Consts from "./consts.js";
-import Rules from "./rule.js";
-import Page from "./page.js";
+import { BadgeColors, TabStatus } from './enums.js';
+import Badge from './badge.js';
+import Helpers from './helpers';
+import Consts from './consts.js';
+import Rules from './rule.js';
+import Pages from './pages';
 
 export let indexSeconds = 0;
 export let pages = {};
@@ -28,20 +28,27 @@ function getPageSpentTime(domain) {
     const reducingTimes = (a, b) => {
       return a + (!!b.to ? b.sum : new Date() - b.from);
     };
-    return new Date(pages[domain].visits.reduce(reducingTimes, 0));
+    return pages[domain].visits.reduce(reducingTimes, 0);
   }
   return 0;
 }
 
 function getHistoryTable() {
-  const domains = Object.keys(pages);
-  console.table(domains.flatMap((domain) => pages[domain].visits));
+  const domains = Object.entries(pages);
+  console.table(
+    domains.flatMap(domain => [
+      {
+        domain: domain[0],
+        visit: domain[1].visits,
+      },
+    ])
+  );
 }
 
 function initAllTabs(allTabs) {
-  allTabs.forEach((tab) => {
+  allTabs.forEach(tab => {
     const domain = Helpers.urlToDomain(tab.url);
-    const firstOpenedPage = Page.addPage(pages, domain);
+    const firstOpenedPage = Pages.addPage(pages, domain);
     if (!!firstOpenedPage && tab.selected) {
       const currentTime = new Date();
       Pages.initPageVisits(firstOpenedPage, currentTime);
@@ -52,12 +59,12 @@ function initAllTabs(allTabs) {
 function processChangeOfTab(selectedTab) {
   const domain = Helpers.urlToDomain(selectedTab.url);
   const status = selectedTab.status;
-  Page.finishAndStartPageVisits(pages, domain, status);
+  Pages.finishAndStartPageVisits(pages, domain, status);
   badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
 }
 
 function onTabActivated(activeInfo) {
-  chrome.tabs.get(activeInfo.tabId, (selectedTab) => {
+  chrome.tabs.get(activeInfo.tabId, selectedTab => {
     processChangeOfTab(selectedTab);
   });
 }
@@ -86,7 +93,7 @@ function init() {
     {
       currentWindow: true,
     },
-    (tabs) => {
+    tabs => {
       initAllTabs(tabs);
     }
   );
@@ -94,10 +101,8 @@ function init() {
 
 init();
 
-/*
 // for easy debugging
 window.getPages = getPages;
 window.getIndexSeconds = getIndexSeconds;
 window.getPageSpentTime = getPageSpentTime;
 window.getHistoryTable = getHistoryTable;
-*/
