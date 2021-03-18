@@ -1,5 +1,3 @@
-"use strict";
-
 const Consts = {
   badgeRefreshIntervalTimeInMs: 1000,
 };
