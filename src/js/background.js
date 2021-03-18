@@ -2,7 +2,7 @@
 
 import { BadgeColors, TabStatus } from "./enums.js";
 import Badge from "./badge.js";
-import Helpers from "./helpers.js";
+import Helpers from "./helpers.ts";
 import Consts from "./consts.js";
 import Rules from "./rule.js";
 import Page from "./page.js";

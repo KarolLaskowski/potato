@@ -1,6 +1,6 @@
 "use strict";
 
-import Helpers from "./helpers.js";
+import Helpers from "./helpers.ts";
 
 class PageVisit {
   constructor(from, to, type, tabIndex) {

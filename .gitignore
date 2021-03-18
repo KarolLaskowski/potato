@@ -8,6 +8,7 @@ yarn-error.log*
 .npm
 .cache
 dist
+build
 .env
 /coverage.data
 /coverage/

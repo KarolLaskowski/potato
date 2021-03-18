@@ -1,8 +1,6 @@
-"use strict";
-
-function urlToDomain(url) {
-  var result;
-  var match;
+function urlToDomain(url: string) {
+  let result;
+  let match;
   if (
     (match = url.match(
       /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im
@@ -16,7 +14,7 @@ function urlToDomain(url) {
   return result;
 }
 
-function isDomainValid(domain) {
+function isDomainValid(domain: string) {
   return !!domain && domain.includes(".");
 }
 

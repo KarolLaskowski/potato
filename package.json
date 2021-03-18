@@ -2,10 +2,11 @@
   "name": "potato",
   "version": "0.0.6",
   "description": "Simple Chrome/Opera extension to track the time you spent on each webpage",
-  "type": "module",
   "main": "./src/js/background.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack --env NODE_ENV=development --mode development",
+    "prod": "./node_modules/.bin/webpack --env NODE_ENV=production --mode production"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,18 @@
   },
   "homepage": "https://github.com/KarolLaskowski/potato#readme",
   "devDependencies": {
-    "jest": "^26.6.3"
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-typescript": "^7.13.0",
+    "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^8.0.0",
+    "ts-loader": "^8.0.18",
+    "typescript": "^4.2.3",
+    "webpack": "^5.26.3",
+    "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1"
   }
 }
