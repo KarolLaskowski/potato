@@ -97,12 +97,10 @@ function addPage(pages: any, domain: string): Page {
   return page;
 }
 
-const Pages = {
-  Page,
-  PageVisit,
+const PageHelper = {
   initPageVisits,
   addPage,
   finishAndStartPageVisits,
 };
 
-export default Pages;
+export { PageHelper, Page, PageVisit };

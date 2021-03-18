@@ -5,7 +5,7 @@ import Badge from './badge.js';
 import Helpers from './helpers';
 import Consts from './consts.js';
 import Rules from './rule.js';
-import Pages from './pages';
+import { PageHelper, Page, PageVisit } from './pages';
 
 export let indexSeconds = 0;
 export let pages = {};
@@ -48,10 +48,10 @@ function getHistoryTable() {
 function initAllTabs(allTabs) {
   allTabs.forEach(tab => {
     const domain = Helpers.urlToDomain(tab.url);
-    const firstOpenedPage = Pages.addPage(pages, domain);
+    const firstOpenedPage = PageHelper.addPage(pages, domain);
     if (!!firstOpenedPage && tab.selected) {
       const currentTime = new Date();
-      Pages.initPageVisits(firstOpenedPage, currentTime);
+      PageHelper.initPageVisits(firstOpenedPage, currentTime);
     }
   });
 }
@@ -59,7 +59,7 @@ function initAllTabs(allTabs) {
 function processChangeOfTab(selectedTab) {
   const domain = Helpers.urlToDomain(selectedTab.url);
   const status = selectedTab.status;
-  Pages.finishAndStartPageVisits(pages, domain, status);
+  PageHelper.finishAndStartPageVisits(pages, domain, status);
   badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
 }
 
