@@ -3,7 +3,7 @@
 import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge.js';
 import Helpers from './helpers';
-import Consts from './consts.js';
+import Consts from './consts';
 import Rules from './rule.js';
 import { PageHelper, Page, PageVisit } from './pages';
 

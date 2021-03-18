@@ -1,22 +1,23 @@
 import Helpers from './helpers';
+import { TabStatus } from './enums';
 
 class PageVisit {
   from: Date;
   to: Date;
-  type: string;
+  status: TabStatus;
   tabIndex: number;
   sum: number;
 
   constructor(
     from: Date,
     to: Date,
-    type: string,
+    status: TabStatus,
     tabIndex: number,
     sum: number = 0
   ) {
     this.from = from;
     this.to = to;
-    this.type = type;
+    this.status = status;
     this.tabIndex = tabIndex;
     this.sum = sum;
   }
@@ -52,7 +53,7 @@ function finishPageVisits(pages: any, finishTime: Date): void {
 function startPageVisit(
   page: Page,
   startTime: Date,
-  type: string = null,
+  type: TabStatus = TabStatus.Complete,
   tabIndex: number = null
 ): void {
   if (!!page) {
@@ -64,8 +65,8 @@ function startPageVisits(
   pages: any,
   domain: string,
   pageChangedTime: Date,
-  type: string,
-  tabIndex: number
+  type: TabStatus = TabStatus.Complete,
+  tabIndex: number = null
 ): void {
   const page = addPage(pages, domain);
   startPageVisit(page, pageChangedTime, type, tabIndex);
@@ -74,8 +75,8 @@ function startPageVisits(
 function finishAndStartPageVisits(
   pages: any,
   domain: string,
-  type: string,
-  tabIndex: number
+  type: TabStatus = TabStatus.Complete,
+  tabIndex: number = null
 ): void {
   const pageChangedTime = new Date();
   finishPageVisits(pages, pageChangedTime);
