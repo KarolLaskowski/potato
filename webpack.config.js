@@ -7,7 +7,7 @@ const mode =
 module.exports = {
   mode: mode,
   target: 'node',
-  entry: './src/js/background.js',
+  entry: './src/js/background.ts',
   devtool: 'source-map',
   module: {
     rules: [

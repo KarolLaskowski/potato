@@ -2,7 +2,7 @@
   "name": "potato",
   "version": "0.0.6",
   "description": "Simple Chrome/Opera extension to track the time you spent on each webpage",
-  "main": "./src/js/background.js",
+  "main": "./src/js/background.ts",
   "scripts": {
     "test": "./node_modules/.bin/jest --coverage",
     "debug": "./node_modules/.bin/webpack --env NODE_ENV=development --mode development",

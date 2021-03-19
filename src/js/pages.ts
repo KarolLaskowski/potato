@@ -21,6 +21,13 @@ class PageVisit {
     this.tabIndex = tabIndex;
     this.sum = sum;
   }
+
+  finish = (finishTime: Date): void => {
+    if (!this.to) {
+      this.to = finishTime;
+      this.sum = this.to.getTime() - this.from.getTime();
+    }
+  };
 }
 
 class Page {
@@ -29,36 +36,34 @@ class Page {
   constructor() {
     this.visits = [];
   }
+
+  getTotalSpentTime = (): number => {
+    if (this.visits.length) {
+      const now = new Date().getTime();
+      const reducingTimes = (acc: number, item: PageVisit, i: number) => {
+        return acc + (!!item.to ? item.sum : now - item.from.getTime());
+      };
+      return this.visits.reduce(reducingTimes, 0);
+    }
+    return 0;
+  };
+
+  finishVisits = (finishTime: Date): void => {
+    this.visits.forEach((visit: PageVisit) => visit.finish(finishTime));
+  };
+
+  startVisit = (
+    startTime: Date,
+    type: TabStatus = TabStatus.Complete,
+    tabIndex: number = null
+  ): void => {
+    this.visits.push(new PageVisit(startTime, null, type, tabIndex));
+  };
 }
 
 function addDomainAsPage(pages: any, domain: string): Page {
   pages[domain] = new Page();
   return pages[domain];
-}
-
-function finishSingleVisit(finishTime: Date, visit: PageVisit): void {
-  if (!visit.to) {
-    visit.to = finishTime;
-    visit.sum = visit.to.getTime() - visit.from.getTime();
-  }
-}
-
-function finishPageVisits(pages: any, finishTime: Date): void {
-  const domains = Object.keys(pages);
-  domains.forEach(domain => {
-    pages[domain].visits.forEach(finishSingleVisit.bind(null, finishTime));
-  });
-}
-
-function startPageVisit(
-  page: Page,
-  startTime: Date,
-  type: TabStatus = TabStatus.Complete,
-  tabIndex: number = null
-): void {
-  if (!!page) {
-    page.visits.push(new PageVisit(startTime, null, type, tabIndex));
-  }
 }
 
 function startPageVisits(
@@ -69,7 +74,16 @@ function startPageVisits(
   tabIndex: number = null
 ): void {
   const page = addPage(pages, domain);
-  startPageVisit(page, pageChangedTime, type, tabIndex);
+  if (page) {
+    page.startVisit(pageChangedTime, type, tabIndex);
+  }
+}
+
+function finishPageVisits(pages: any, finishTime: Date): void {
+  const domains = Object.keys(pages);
+  domains.forEach(domain => {
+    pages[domain].finishVisits(finishTime);
+  });
 }
 
 function finishAndStartPageVisits(
@@ -78,17 +92,17 @@ function finishAndStartPageVisits(
   type: TabStatus = TabStatus.Complete,
   tabIndex: number = null
 ): void {
-  const pageChangedTime = new Date();
+  const pageChangedTime: Date = new Date();
   finishPageVisits(pages, pageChangedTime);
   startPageVisits(pages, domain, pageChangedTime, type, tabIndex);
 }
 
 function initPageVisits(page: any, currentTime: Date): void {
-  startPageVisit(page, currentTime);
+  page.startVisit(currentTime);
 }
 
 function addPage(pages: any, domain: string): Page {
-  let page = null;
+  let page: Page = null;
   if (Helpers.isDomainValid(domain)) {
     page = pages[domain];
     if (!page) {
@@ -102,6 +116,8 @@ const PageHelper = {
   initPageVisits,
   addPage,
   finishAndStartPageVisits,
+  startPageVisits,
+  finishPageVisits,
 };
 
 export { PageHelper, Page, PageVisit };

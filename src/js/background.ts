@@ -1,50 +1,45 @@
-'use strict';
-
 import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge';
 import Helpers from './helpers';
 import Consts from './consts';
-import { PageHelper, Page, PageVisit } from './pages';
+import { PageHelper, PageVisit } from './pages';
 
-export let indexSeconds = 0;
-export let pages = {};
-let badgeRefreshInterval;
+export let indexSeconds: number = 0;
+export let pages: any = {};
+let badgeRefreshInterval: number;
 
-function getPages() {
+function getPages(): any {
   return pages || {};
 }
 
-function getIndexSeconds() {
+function getIndexSeconds(): number {
   return indexSeconds || 0;
 }
 
-function getPageSpentTime(domain) {
+function getPageSpentTime(domain: string): number {
   if (
     Helpers.isDomainValid(domain) &&
     !!pages[domain] &&
     !!pages[domain].visits.length
   ) {
-    const reducingTimes = (a, b) => {
-      return a + (!!b.to ? b.sum : new Date() - b.from);
-    };
-    return pages[domain].visits.reduce(reducingTimes, 0);
+    return pages[domain].getSpentTime();
   }
   return 0;
 }
 
-function getHistoryTable() {
+function getHistoryTable(): void {
   const domains = Object.entries(pages);
-  console.table(
-    domains.flatMap(domain => [
-      {
-        domain: domain[0],
-        visit: domain[1].visits,
-      },
-    ])
-  );
+  // console.table(
+  //   domains.flatMap(domain => [
+  //     {
+  //       domain: domain[0],
+  //       visit: domain[1].visits,
+  //     },
+  //   ])
+  // );
 }
 
-function initAllTabs(allTabs) {
+function initAllTabs(allTabs: Array<any>): void {
   allTabs.forEach(tab => {
     const domain = Helpers.urlToDomain(tab.url);
     const firstOpenedPage = PageHelper.addPage(pages, domain);
@@ -55,35 +50,35 @@ function initAllTabs(allTabs) {
   });
 }
 
-function processChangeOfTab(selectedTab) {
+function processChangeOfTab(selectedTab: any): void {
   const domain = Helpers.urlToDomain(selectedTab.url);
   const status = selectedTab.status;
   PageHelper.finishAndStartPageVisits(pages, domain, status);
   badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
 }
 
-function onTabActivated(activeInfo) {
+function onTabActivated(activeInfo: any): void {
   chrome.tabs.get(activeInfo.tabId, selectedTab => {
     processChangeOfTab(selectedTab);
   });
 }
 
-function onTabUpdated(tabId, changeInfo, tab) {
+function onTabUpdated(tabId: number, changeInfo: any, tab: any): void {
   processChangeOfTab(tab);
 }
 
-function initBadge() {
+function initBadge(): void {
   chrome.browserAction.setBadgeBackgroundColor({
     color: BadgeColors.Unblocked,
   });
 }
 
-function setTabEventListeners() {
+function setTabEventListeners(): void {
   chrome.tabs.onActivated.addListener(onTabActivated);
   chrome.tabs.onUpdated.addListener(onTabUpdated);
 }
 
-function init() {
+function init(): void {
   setTabEventListeners();
   initBadge();
   badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
@@ -99,6 +94,15 @@ function init() {
 }
 
 init();
+
+declare global {
+  interface Window {
+    getPages(): any;
+    getIndexSeconds(): number;
+    getPageSpentTime(domain: string): number;
+    getHistoryTable(): void;
+  }
+}
 
 if (process.env.NODE_ENV !== 'production') {
   // for easy debugging
