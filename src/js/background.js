@@ -101,8 +101,10 @@ function init() {
 
 init();
 
-// for easy debugging
-window.getPages = getPages;
-window.getIndexSeconds = getIndexSeconds;
-window.getPageSpentTime = getPageSpentTime;
-window.getHistoryTable = getHistoryTable;
+if (process.env.NODE_ENV !== 'production') {
+  // for easy debugging
+  window.getPages = getPages;
+  window.getIndexSeconds = getIndexSeconds;
+  window.getPageSpentTime = getPageSpentTime;
+  window.getHistoryTable = getHistoryTable;
+}
