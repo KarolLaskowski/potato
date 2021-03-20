@@ -136,3 +136,37 @@ test('isDomainValid returns true when given valid domain URL', () => {
   //assert
   expect(result).toBe(true);
 });
+
+test('urlIsChromeExtensions returns true when given Chrome extension URL', () => {
+  // arrange
+  const pendingUrl =
+    'chrome-extension://faaeenegfiogpnlgjkmejakhmkkbcmgn/html/config.html';
+
+  //act
+  let result = Helpers.urlIsChromeExtensions(pendingUrl);
+
+  //assert
+  expect(result).toBe(true);
+});
+
+test('urlIsChromeExtensions returns true when given Chrome speed dial tab url', () => {
+  // arrange
+  const pendingUrl = '"chrome://startpageshared/"';
+
+  //act
+  let result = Helpers.urlIsChromeExtensions(pendingUrl);
+
+  //assert
+  expect(result).toBe(true);
+});
+
+test('urlIsChromeExtensions returns false when given regular URL', () => {
+  // arrange
+  const pendingUrl = 'https://example.com/config.html';
+
+  //act
+  let result = Helpers.urlIsChromeExtensions(pendingUrl);
+
+  //assert
+  expect(result).toBe(false);
+});

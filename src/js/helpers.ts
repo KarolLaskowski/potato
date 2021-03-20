@@ -18,9 +18,21 @@ function isDomainValid(domain: string): boolean {
   return !!domain && !!domain.match(/^([a-z0-9]+\.)?([a-z0-9]+\.[a-z0-9]+)$/);
 }
 
+function urlIsChromeExtensions(url: string): boolean {
+  return url && (url.includes('chrome-extension') || url.includes('chrome://'));
+}
+
+function tabIsChromeExtensions(tab: chrome.tabs.Tab): boolean {
+  return (
+    urlIsChromeExtensions(tab.pendingUrl) || urlIsChromeExtensions(tab.url)
+  );
+}
+
 const Helpers = {
   urlToDomain,
   isDomainValid,
+  tabIsChromeExtensions,
+  urlIsChromeExtensions,
 };
 
 export default Helpers;
