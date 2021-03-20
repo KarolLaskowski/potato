@@ -1,19 +1,20 @@
 import Helpers from './helpers';
 import { TabStatus } from './enums';
+import { TimeStamp } from './common';
 
 class PageVisit {
-  from: Date;
   to: Date;
+  from: Date;
   status: TabStatus;
   tabIndex: number;
-  sum: number;
+  private sum: TimeStamp;
 
   constructor(
     from: Date,
     to: Date,
     status: TabStatus,
     tabIndex: number,
-    sum: number = 0
+    sum: TimeStamp = 0
   ) {
     this.from = from;
     this.to = to;
@@ -28,6 +29,11 @@ class PageVisit {
       this.sum = this.to.getTime() - this.from.getTime();
     }
   };
+
+  spentTime = (now: TimeStamp = null): TimeStamp => {
+    const nowTimestamp = now || new Date().getTime();
+    return !!this.to ? this.sum : nowTimestamp - this.from.getTime();
+  };
 }
 
 class Page {
@@ -37,11 +43,11 @@ class Page {
     this.visits = [];
   }
 
-  getTotalSpentTime = (): number => {
+  getTotalSpentTime = (now: TimeStamp = null): TimeStamp => {
     if (this.visits.length) {
-      const now = new Date().getTime();
-      const reducingTimes = (acc: number, item: PageVisit, i: number) => {
-        return acc + (!!item.to ? item.sum : now - item.from.getTime());
+      const nowTimestamp: TimeStamp = now || new Date().getTime();
+      const reducingTimes = (acc: TimeStamp, item: PageVisit, i: number) => {
+        return acc + item.spentTime(nowTimestamp);
       };
       return this.visits.reduce(reducingTimes, 0);
     }

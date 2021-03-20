@@ -3,6 +3,7 @@ import Badge from './badge';
 import Helpers from './helpers';
 import { Consts, TimeStamp } from './common';
 import { PageHelper, PageVisit } from './pages';
+import Config from './config';
 
 export let indexSeconds: number = 0;
 export let pages: any = {};
@@ -27,16 +28,8 @@ function getPageSpentTime(domain: string): number {
   return 0;
 }
 
-function getHistoryTable(): void {
-  const domains = Object.entries(pages);
-  // console.table(
-  //   domains.flatMap(domain => [
-  //     {
-  //       domain: domain[0],
-  //       visit: domain[1].visits,
-  //     },
-  //   ])
-  // );
+function getHistoryLog(): void {
+  console.table(Config.getPagesWithVisits(pages));
 }
 
 function initAllTabs(allTabs: Array<any>): void {
@@ -50,20 +43,26 @@ function initAllTabs(allTabs: Array<any>): void {
   });
 }
 
-function processChangeOfTab(selectedTab: any): void {
-  const domain = Helpers.urlToDomain(selectedTab.url);
-  const status = selectedTab.status;
-  PageHelper.finishAndStartPageVisits(pages, domain, status);
-  badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
+function processChangeOfTab(selectedTab: chrome.tabs.Tab): void {
+  if (!Helpers.tabIsChromeExtensions(selectedTab)) {
+    const domain: string = Helpers.urlToDomain(selectedTab.url);
+    const status: TabStatus = (<any>TabStatus)[selectedTab.status];
+    PageHelper.finishAndStartPageVisits(pages, domain, status);
+    badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
+  }
 }
 
-function onTabActivated(activeInfo: any): void {
+function onTabActivated(activeInfo: chrome.tabs.TabActiveInfo): void {
   chrome.tabs.get(activeInfo.tabId, selectedTab => {
     processChangeOfTab(selectedTab);
   });
 }
 
-function onTabUpdated(tabId: number, changeInfo: any, tab: any): void {
+function onTabUpdated(
+  tabId: number,
+  changeInfo: chrome.tabs.TabChangeInfo,
+  tab: chrome.tabs.Tab
+): void {
   processChangeOfTab(tab);
 }
 
@@ -100,7 +99,7 @@ declare global {
     getPages(): any;
     getIndexSeconds(): number;
     getPageSpentTime(domain: string): number;
-    getHistoryTable(): void;
+    getHistoryLog(): void;
   }
 }
 
@@ -109,5 +108,5 @@ if (process.env.NODE_ENV !== 'production') {
   window.getPages = getPages;
   window.getIndexSeconds = getIndexSeconds;
   window.getPageSpentTime = getPageSpentTime;
-  window.getHistoryTable = getHistoryTable;
+  window.getHistoryLog = getHistoryLog;
 }
