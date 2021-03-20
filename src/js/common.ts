@@ -2,4 +2,6 @@ const Consts = {
   badgeRefreshIntervalTimeInMs: 1000,
 };
 
-export default Consts;
+type TimeStamp = number;
+
+export { Consts, TimeStamp };
