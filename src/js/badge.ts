@@ -1,4 +1,4 @@
-import Consts from './consts';
+import { Consts } from './common';
 
 function setBadge(badgePayload: any): void {
   chrome.browserAction.setBadgeText({

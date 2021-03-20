@@ -1,7 +1,7 @@
 import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge';
 import Helpers from './helpers';
-import Consts from './consts';
+import { Consts, TimeStamp } from './common';
 import { PageHelper, PageVisit } from './pages';
 
 export let indexSeconds: number = 0;
