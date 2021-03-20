@@ -7,7 +7,10 @@ const mode =
 module.exports = {
   mode: mode,
   target: 'node',
-  entry: './src/js/background.ts',
+  entry: {
+    background: './src/js/background.ts',
+    options: './src/js/options.ts',
+  },
   devtool: 'source-map',
   module: {
     rules: [
@@ -38,7 +41,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: './js/background.js',
+    filename: './js/[name].js',
     path: path.resolve(__dirname, 'build'),
   },
 };

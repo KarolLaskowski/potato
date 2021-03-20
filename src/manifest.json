@@ -18,5 +18,5 @@
     "default_title": "Codename - Potato",
     "default_popup": "html/popup.html"
   },
-  "options_page": "html/config.html"
+  "options_page": "html/options.html"
 }
