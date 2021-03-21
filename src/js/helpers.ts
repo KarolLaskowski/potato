@@ -24,7 +24,8 @@ function urlIsChromeExtensions(url: string): boolean {
 
 function tabIsChromeExtensions(tab: chrome.tabs.Tab): boolean {
   return (
-    urlIsChromeExtensions(tab.pendingUrl) || urlIsChromeExtensions(tab.url)
+    !!tab &&
+    (urlIsChromeExtensions(tab.pendingUrl) || urlIsChromeExtensions(tab.url))
   );
 }
 

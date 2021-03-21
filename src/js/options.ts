@@ -4,6 +4,10 @@ import { Consts, TimeStamp } from './common';
 import { PageHelper, PageVisit } from './pages';
 import Config from './config';
 
-const $pagesTable = document.querySelectorAll('#pages tbody').item(0);
-//const data = Config.getPagesWithVisits();
-//Config.DOM.fillTableWithData($pagesTable, data);
+async function render() {
+  const $pagesTable = document.querySelectorAll('#pages').item(0);
+  const data = await Config.getPagesWithVisits();
+  Config.DOM.fillTableWithData($pagesTable, data);
+}
+
+render();

@@ -7,32 +7,36 @@ class PageVisit {
   from: Date;
   status: TabStatus;
   tabIndex: number;
-  private sum: TimeStamp;
+  private _spentTime: TimeStamp;
 
-  constructor(
-    from: Date,
-    to: Date,
-    status: TabStatus,
-    tabIndex: number,
-    sum: TimeStamp = 0
-  ) {
-    this.from = from;
-    this.to = to;
+  constructor(from: Date, to: Date, status: TabStatus, tabIndex: number) {
+    this.from = typeof from === 'string' ? new Date(Date.parse(from)) : from;
+    this.to = typeof to === 'string' ? new Date(Date.parse(to)) : to;
     this.status = status;
     this.tabIndex = tabIndex;
-    this.sum = sum;
+    this._spentTime = this._countSpentTime();
+  }
+
+  private _countSpentTime(): TimeStamp {
+    return this.from && this.to ? this.to.getTime() - this.from.getTime() : 0;
   }
 
   finish = (finishTime: Date): void => {
     if (!this.to) {
       this.to = finishTime;
-      this.sum = this.to.getTime() - this.from.getTime();
+      this._spentTime = this.to.getTime() - this.from.getTime();
     }
   };
 
-  spentTime = (now: TimeStamp = null): TimeStamp => {
-    const nowTimestamp = now || new Date().getTime();
-    return !!this.to ? this.sum : nowTimestamp - this.from.getTime();
+  getSpentTime = (now: TimeStamp = null): TimeStamp => {
+    if (this._spentTime > 0) {
+      return this._spentTime;
+    }
+    if (!!this.from && !this.to) {
+      const nowTimestamp = now || new Date().getTime();
+      return nowTimestamp - this.from.getTime();
+    }
+    return 0;
   };
 }
 
@@ -47,7 +51,7 @@ class Page {
     if (this.visits.length) {
       const nowTimestamp: TimeStamp = now || new Date().getTime();
       const reducingTimes = (acc: TimeStamp, item: PageVisit, i: number) => {
-        return acc + item.spentTime(nowTimestamp);
+        return acc + item.getSpentTime(nowTimestamp);
       };
       return this.visits.reduce(reducingTimes, 0);
     }
@@ -88,7 +92,8 @@ function startPageVisits(
 function finishPageVisits(pages: any, finishTime: Date): void {
   const domains = Object.keys(pages);
   domains.forEach(domain => {
-    pages[domain].finishVisits(finishTime);
+    const page: Page = pages[domain];
+    page.finishVisits(finishTime);
   });
 }
 

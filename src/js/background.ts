@@ -2,15 +2,17 @@ import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge';
 import Helpers from './helpers';
 import { Consts, TimeStamp } from './common';
-import { PageHelper, PageVisit } from './pages';
+import { Page, PageHelper, PageVisit } from './pages';
 import Config from './config';
+import PagesStore from './pagesStore';
+import { Sync } from './storage';
 
 export let indexSeconds: number = 0;
-export let pages: any = {};
 let badgeRefreshInterval: number;
+let pagesStore: PagesStore;
 
 function getPages(): any {
-  return pages || {};
+  return pagesStore.all();
 }
 
 function getIndexSeconds(): number {
@@ -18,21 +20,23 @@ function getIndexSeconds(): number {
 }
 
 function getPageSpentTime(domain: string): number {
+  const pages: any = pagesStore.all();
   if (
     Helpers.isDomainValid(domain) &&
     !!pages[domain] &&
     !!pages[domain].visits.length
   ) {
-    return pages[domain].getSpentTime();
+    return pages[domain].getTotalSpentTime();
   }
   return 0;
 }
 
 function getHistoryLog(): void {
-  console.table(Config.getPagesWithVisits(pages));
+  console.table(Config.getPagesWithVisits());
 }
 
 function initAllTabs(allTabs: Array<any>): void {
+  const pages: object = {};
   allTabs.forEach(tab => {
     const domain = Helpers.urlToDomain(tab.url);
     const firstOpenedPage = PageHelper.addPage(pages, domain);
@@ -41,13 +45,16 @@ function initAllTabs(allTabs: Array<any>): void {
       PageHelper.initPageVisits(firstOpenedPage, currentTime);
     }
   });
+  pagesStore.save(pages);
 }
 
-function processChangeOfTab(selectedTab: chrome.tabs.Tab): void {
-  if (!Helpers.tabIsChromeExtensions(selectedTab)) {
+async function processChangeOfTab(selectedTab: chrome.tabs.Tab) {
+  if (!!selectedTab && !Helpers.tabIsChromeExtensions(selectedTab)) {
     const domain: string = Helpers.urlToDomain(selectedTab.url);
     const status: TabStatus = (<any>TabStatus)[selectedTab.status];
+    const pages: any = await pagesStore.all();
     PageHelper.finishAndStartPageVisits(pages, domain, status);
+    await pagesStore.save(pages);
     badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
   }
 }
@@ -78,6 +85,7 @@ function setTabEventListeners(): void {
 }
 
 function init(): void {
+  pagesStore = new PagesStore();
   setTabEventListeners();
   initBadge();
   badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
@@ -100,6 +108,9 @@ declare global {
     getIndexSeconds(): number;
     getPageSpentTime(domain: string): number;
     getHistoryLog(): void;
+    set(key: string, value: any): Promise<unknown>;
+    get(key: string): Promise<unknown>;
+    pagesStore: PagesStore;
   }
 }
 
@@ -109,4 +120,7 @@ if (process.env.NODE_ENV !== 'production') {
   window.getIndexSeconds = getIndexSeconds;
   window.getPageSpentTime = getPageSpentTime;
   window.getHistoryLog = getHistoryLog;
+  window.set = Sync.set;
+  window.get = Sync.get;
+  window.pagesStore = pagesStore;
 }

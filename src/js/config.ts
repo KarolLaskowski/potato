@@ -1,5 +1,8 @@
 import { TimeStamp } from './common';
 import { Page } from './pages';
+import PagesStore from './pagesStore';
+
+let pagesStore: PagesStore = new PagesStore();
 
 interface IPageAndSpentTime {
   nr: number;
@@ -7,12 +10,16 @@ interface IPageAndSpentTime {
   spentTime: TimeStamp;
 }
 
-function getPagesWithVisits(pages: any) {
+async function getPagesWithVisits() {
+  const pages: any = await pagesStore.all();
+  console.log('pages');
+  console.log(pages);
   const domains: Array<string> = Object.keys(pages);
   const now: TimeStamp = new Date().getTime();
   return domains.map(
-    (domain: string): IPageAndSpentTime => {
+    (domain: string, i: number): IPageAndSpentTime => {
       return {
+        nr: i,
         domain: domain,
         spentTime: pages[domain].getTotalSpentTime(now),
       } as IPageAndSpentTime;
@@ -20,11 +27,25 @@ function getPagesWithVisits(pages: any) {
   );
 }
 
+function createCell(value: string): HTMLElement {
+  const $td: HTMLTableCellElement = document.createElement('td');
+  $td.innerText = value;
+  return $td;
+}
+
+function createRow(dataRow: IPageAndSpentTime): HTMLElement {
+  const $row: HTMLTableRowElement = document.createElement('tr');
+  $row.appendChild(createCell(dataRow.nr.toString()));
+  $row.appendChild(createCell(dataRow.domain));
+  $row.appendChild(createCell((dataRow.spentTime / 1000).toString()));
+  return $row;
+}
+
 function fillTableWithData(
-  $table: HTMLElement,
+  $table: Element,
   data: Array<IPageAndSpentTime>
 ): void {
-  if ($table) {
+  if (!$table) {
     throw TypeError('Table element not found');
   }
   const $tbodyCollection: HTMLCollection = $table.getElementsByTagName('tbody');
@@ -32,16 +53,7 @@ function fillTableWithData(
     const $tbody = $tbodyCollection.item(0);
     $tbody.innerHTML = '';
     for (let i = 0; i < data.length; i++) {
-      const $row: HTMLTableRowElement = document.createElement('tr');
-      const $tdId: HTMLTableCellElement = document.createElement('td');
-      const $tdDomain: HTMLTableCellElement = document.createElement('td');
-      const $tdTime: HTMLTableCellElement = document.createElement('td');
-
-      $tdId.innerText = data[i].nr.toString();
-      $tdDomain.innerText = data[i].domain;
-      $tdTime.innerText = (data[i].spentTime / 1000).toString();
-
-      $tbody.appendChild($row);
+      $tbody.appendChild(createRow(data[i]));
     }
   }
 }
