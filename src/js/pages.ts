@@ -18,13 +18,15 @@ class PageVisit {
   }
 
   private _countSpentTime(): TimeStamp {
-    return this.from && this.to ? this.to.getTime() - this.from.getTime() : 0;
+    return !!this.from && !!this.to
+      ? this.to.getTime() - this.from.getTime()
+      : 0;
   }
 
   finish = (finishTime: Date): void => {
     if (!this.to) {
       this.to = finishTime;
-      this._spentTime = this.to.getTime() - this.from.getTime();
+      this._spentTime = this._countSpentTime();
     }
   };
 

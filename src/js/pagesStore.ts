@@ -2,13 +2,13 @@ import { Page, PageHelper, PageVisit } from './pages';
 import { Sync } from './storage';
 
 class PagesStore {
-  pages: object;
+  private _pages: object;
 
   constructor(newPages: object = null) {
     if (newPages) {
       this.save(newPages);
     } else {
-      this.pages = this.pages || {};
+      this._pages = this._pages || {};
     }
   }
 
@@ -38,25 +38,29 @@ class PagesStore {
   private _sync = async () => {
     const pagesDb: any = await Sync.get('pages');
     const domainsAddTostore = Object.keys(pagesDb).filter(
-      d => !Object.keys(this.pages).includes(d)
+      d => !Object.keys(this._pages).includes(d)
     );
-    this.pages = this._copyPagesFromDb(this.pages, domainsAddTostore, pagesDb);
-    await Sync.set('pages', this.pages);
+    this._pages = this._copyPagesFromDb(
+      this._pages,
+      domainsAddTostore,
+      pagesDb
+    );
+    await Sync.set('pages', this._pages);
   };
 
   count = () => {
-    return Object.keys(this.pages).length;
+    return Object.keys(this._pages).length;
   };
 
   all = async () => {
     if (!this.count()) {
       await this._sync();
     }
-    return this.pages || {};
+    return this._pages || {};
   };
 
   save = async (newPages: object) => {
-    this.pages = newPages;
+    this._pages = newPages;
     await Sync.set('pages', newPages);
   };
 }

@@ -12,8 +12,6 @@ interface IPageAndSpentTime {
 
 async function getPagesWithVisits() {
   const pages: any = await pagesStore.all();
-  console.log('pages');
-  console.log(pages);
   const domains: Array<string> = Object.keys(pages);
   const now: TimeStamp = new Date().getTime();
   return domains.map(

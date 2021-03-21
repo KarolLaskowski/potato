@@ -49,14 +49,25 @@ function initAllTabs(allTabs: Array<any>): void {
 }
 
 async function processChangeOfTab(selectedTab: chrome.tabs.Tab) {
-  if (!!selectedTab && !Helpers.tabIsChromeExtensions(selectedTab)) {
+  const pageChangedTime: Date = new Date();
+  const pages: any = await pagesStore.all();
+  PageHelper.finishPageVisits(pages, pageChangedTime);
+  if (
+    !!selectedTab &&
+    !!selectedTab.url &&
+    !Helpers.tabIsChromeExtensions(selectedTab)
+  ) {
     const domain: string = Helpers.urlToDomain(selectedTab.url);
     const status: TabStatus = (<any>TabStatus)[selectedTab.status];
-    const pages: any = await pagesStore.all();
-    PageHelper.finishAndStartPageVisits(pages, domain, status);
-    await pagesStore.save(pages);
+    PageHelper.startPageVisits(
+      pages,
+      domain,
+      pageChangedTime,
+      TabStatus.Complete
+    );
     badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
   }
+  await pagesStore.save(pages);
 }
 
 function onTabActivated(activeInfo: chrome.tabs.TabActiveInfo): void {
