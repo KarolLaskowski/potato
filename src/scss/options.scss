@@ -1,0 +1,19 @@
+#tab-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  button {
+    height: 50px;
+    flex: 0 0 100px;
+  }
+
+  button.tab-btn-selected {
+    background-color: white;
+  }
+}
+
+div:not(.tab-visible) {
+  display: none;
+}

@@ -4,20 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Potato</title>
+    <link rel="stylesheet" href="../css/options.css" />
   </head>
   <body>
     <h2>Configuration</h2>
-    <h3>Pages</h3>
-    <table id="pages">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Address</th>
-          <th>Time allowed</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div id="tab-buttons">
+      <button class="tab-btn tab-btn-selected" data-for="tab-dashboard">
+        Dashboard
+      </button>
+      <button class="tab-btn" data-for="tab-blocked-pages">
+        Blocked pages
+      </button>
+      <button class="tab-btn" data-for="tab-allowed-pages">
+        Allowed pages
+      </button>
+      <button class="tab-btn" data-for="tab-options">Options</button>
+      <button class="tab-btn" data-for="tab-info">Info</button>
+    </div>
+    <div id="tab-dashboard" class="tab tab-visible">
+      <h3>Dashboard</h3>
+      <table id="pages">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Address</th>
+            <th>Time spent</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="tab-blocked-pages" class="tab">
+      <h3>Blocked pages</h3>
+      <ul id="blocked-pages--list">
+        <li>wykop.pl<span>30 min</span> <span>X</span></li>
+        <li>onet.pl <span>50 sec</span><span>X</span></li>
+        <li>reddit.com <span>30 min</span> <span>X</span></li>
+        <li>youtube.com <span>3 hr</span> <span>X</span></li>
+      </ul>
+      <input type="text" class="blocked-page--url" />
+      <input type="text" class="blocked-page--limit" />
+      <button>Add</button>
+    </div>
+    <div id="tab-allowed-pages" class="tab">
+      <h3>Allowed pages</h3>
+    </div>
+    <div id="tab-options" class="tab">
+      <h3>Options</h3>
+    </div>
+    <div id="tab-info" class="tab">
+      <h3>Info</h3>
+    </div>
     <script type="module" src="../js/options.js"></script>
   </body>
 </html>

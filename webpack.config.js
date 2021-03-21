@@ -10,6 +10,7 @@ module.exports = {
   entry: {
     background: './src/js/background.ts',
     options: './src/js/options.ts',
+    optionsCss: '/src/scss/options.scss',
   },
   devtool: 'source-map',
   module: {
@@ -25,6 +26,17 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         },
+      },
+      {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: { outputPath: './css/', name: '[name].css' },
+          },
+          'sass-loader',
+        ],
       },
     ],
   },
