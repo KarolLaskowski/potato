@@ -52,6 +52,7 @@ async function processChangeOfTab(selectedTab: chrome.tabs.Tab) {
   const pageChangedTime: Date = new Date();
   const pages: any = await pagesStore.all();
   PageHelper.finishPageVisits(pages, pageChangedTime);
+  let spentTimeOnNewTab: TimeStamp = 0;
   if (
     !!selectedTab &&
     !!selectedTab.url &&
@@ -59,14 +60,15 @@ async function processChangeOfTab(selectedTab: chrome.tabs.Tab) {
   ) {
     const domain: string = Helpers.urlToDomain(selectedTab.url);
     const status: TabStatus = (<any>TabStatus)[selectedTab.status];
-    PageHelper.startPageVisits(
-      pages,
-      domain,
-      pageChangedTime,
-      TabStatus.Complete
-    );
-    badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
+    PageHelper.startPageVisits(pages, domain, pageChangedTime, status);
+    spentTimeOnNewTab = pages[domain]
+      ? pages[domain].getTotalSpentTime(pageChangedTime)
+      : 0;
   }
+  badgeRefreshInterval = Badge.resetBadgeAndTimer(
+    badgeRefreshInterval,
+    spentTimeOnNewTab
+  );
   await pagesStore.save(pages);
 }
 
@@ -99,7 +101,7 @@ function init(): void {
   pagesStore = new PagesStore();
   setTabEventListeners();
   initBadge();
-  badgeRefreshInterval = Badge.resetBadge(badgeRefreshInterval, indexSeconds);
+  badgeRefreshInterval = Badge.resetBadgeAndTimer(badgeRefreshInterval);
 
   chrome.tabs.query(
     {

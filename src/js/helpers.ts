@@ -31,7 +31,7 @@ function tabIsChromeExtensions(tab: chrome.tabs.Tab): boolean {
   );
 }
 
-function timestampToString(timestamp: TimeStamp): string {
+function timestampToLongString(timestamp: TimeStamp): string {
   if (!!timestamp) {
     const timeSpent = new Date(timestamp);
     const sec: number = timeSpent.getSeconds();
@@ -46,10 +46,16 @@ function timestampToString(timestamp: TimeStamp): string {
     result += hrs > 0 ? `${hrs} hrs, ` : '';
     result += min > 0 ? `${min} min, ` : '';
     result += sec > 0 ? `${sec} sec` : '';
-    console.log(`${timestamp} => ${timeSpent.toString()} => ${result}`);
     return result;
   }
   return '';
+}
+
+function secondsToHrsMinSecString(seconds: number = 0) {
+  const sec: number = ~~(seconds % 60);
+  const min: number = ~~((seconds % 3600) / 60);
+  const hr: number = ~~(seconds / 3600);
+  return `${hr}:${min}:${sec}`;
 }
 
 const Helpers = {
@@ -57,7 +63,8 @@ const Helpers = {
   isDomainValid,
   tabIsChromeExtensions,
   urlIsChromeExtensions,
-  timestampToString,
+  timestampToLongString,
+  secondsToHrsMinSecString,
 };
 
 export default Helpers;

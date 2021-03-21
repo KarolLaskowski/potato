@@ -39,7 +39,9 @@ function createRow(dataRow: IPageAndSpentTime): HTMLElement {
   const $row: HTMLTableRowElement = document.createElement('tr');
   $row.appendChild(createCell(dataRow.nr.toString()));
   $row.appendChild(createCell(dataRow.domain));
-  $row.appendChild(createCell(Helpers.timestampToString(dataRow.spentTime)));
+  $row.appendChild(
+    createCell(Helpers.timestampToLongString(dataRow.spentTime))
+  );
   return $row;
 }
 

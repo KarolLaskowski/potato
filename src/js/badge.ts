@@ -1,12 +1,19 @@
 import { Consts } from './common';
+import Helpers from './helpers';
 
-function setBadge(badgePayload: any): void {
+let secondsCounter: number = 0;
+
+function setBadge(badgePayload: string): void {
   chrome.browserAction.setBadgeText({
-    text: `S: ${badgePayload.secondsCounter}`,
+    text: badgePayload,
   });
 }
 
-function resetBadgeIntervalTimer(
+function setBadgeToTotalSpentTime(secondsCounter: number): void {
+  setBadge(Helpers.secondsToHrsMinSecString(secondsCounter));
+}
+
+function resetBadgeTimer(
   badgeRefreshInterval: number,
   secondsCounter: number
 ): number {
@@ -14,27 +21,23 @@ function resetBadgeIntervalTimer(
     window.clearInterval(badgeRefreshInterval);
   }
   badgeRefreshInterval = window.setInterval(function () {
-    setBadge({
-      secondsCounter: secondsCounter,
-    });
+    setBadgeToTotalSpentTime(secondsCounter);
     secondsCounter++;
   }, Consts.badgeRefreshIntervalTimeInMs);
   return badgeRefreshInterval;
 }
 
-function resetBadge(
+function resetBadgeAndTimer(
   badgeRefreshInterval: number,
-  indexSeconds: number
+  spentTime: number = 0
 ): number {
-  indexSeconds = 0;
-  setBadge({
-    secondsCounter: indexSeconds,
-  });
-  return resetBadgeIntervalTimer(badgeRefreshInterval, indexSeconds);
+  secondsCounter = ~~(spentTime / 1000);
+  setBadgeToTotalSpentTime(secondsCounter);
+  return resetBadgeTimer(badgeRefreshInterval, secondsCounter);
 }
 
 const Badge = {
-  resetBadge,
+  resetBadgeAndTimer,
 };
 
 export default Badge;
