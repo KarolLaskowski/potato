@@ -1,3 +1,5 @@
+import { TimeStamp } from './common';
+
 function urlToDomain(url: string): string {
   let result;
   let match;
@@ -29,11 +31,33 @@ function tabIsChromeExtensions(tab: chrome.tabs.Tab): boolean {
   );
 }
 
+function timestampToString(timestamp: TimeStamp): string {
+  if (!!timestamp) {
+    const timeSpent = new Date(timestamp);
+    const sec: number = timeSpent.getSeconds();
+    const min: number = timeSpent.getMinutes();
+    const hrs: number = timeSpent.getUTCHours();
+    const days: number = timeSpent.getDate() - 1;
+    const months: number = timeSpent.getMonth();
+    const years: number = timeSpent.getFullYear() - 1970;
+    let result: string = years > 0 ? `${years} years, ` : '';
+    result += months > 0 ? `${months} months, ` : '';
+    result += days > 0 ? `${days} days, ` : '';
+    result += hrs > 0 ? `${hrs} hrs, ` : '';
+    result += min > 0 ? `${min} min, ` : '';
+    result += sec > 0 ? `${sec} sec` : '';
+    console.log(`${timestamp} => ${timeSpent.toString()} => ${result}`);
+    return result;
+  }
+  return '';
+}
+
 const Helpers = {
   urlToDomain,
   isDomainValid,
   tabIsChromeExtensions,
   urlIsChromeExtensions,
+  timestampToString,
 };
 
 export default Helpers;

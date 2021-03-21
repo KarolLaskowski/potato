@@ -51,4 +51,4 @@ const Local = {
   set: setLocal,
 };
 
-export { Sync, Local };
+export { Sync };

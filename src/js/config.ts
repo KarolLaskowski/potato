@@ -1,4 +1,5 @@
 import { TimeStamp } from './common';
+import Helpers from './helpers';
 import { Page } from './pages';
 import PagesStore from './pagesStore';
 
@@ -14,15 +15,18 @@ async function getPagesWithVisits() {
   const pages: any = await pagesStore.all();
   const domains: Array<string> = Object.keys(pages);
   const now: TimeStamp = new Date().getTime();
-  return domains.map(
-    (domain: string, i: number): IPageAndSpentTime => {
-      return {
-        nr: i,
-        domain: domain,
-        spentTime: pages[domain].getTotalSpentTime(now),
-      } as IPageAndSpentTime;
-    }
-  );
+  return domains
+    .map(
+      (domain: string, i: number): IPageAndSpentTime => {
+        return {
+          nr: i,
+          domain: domain,
+          spentTime: pages[domain].getTotalSpentTime(now),
+        } as IPageAndSpentTime;
+      }
+    )
+    .sort((a, b) => a.spentTime - b.spentTime)
+    .reverse();
 }
 
 function createCell(value: string): HTMLElement {
@@ -35,7 +39,7 @@ function createRow(dataRow: IPageAndSpentTime): HTMLElement {
   const $row: HTMLTableRowElement = document.createElement('tr');
   $row.appendChild(createCell(dataRow.nr.toString()));
   $row.appendChild(createCell(dataRow.domain));
-  $row.appendChild(createCell((dataRow.spentTime / 1000).toString()));
+  $row.appendChild(createCell(Helpers.timestampToString(dataRow.spentTime)));
   return $row;
 }
 
