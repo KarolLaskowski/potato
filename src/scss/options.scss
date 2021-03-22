@@ -1,15 +1,35 @@
 @import '~bulma/css/bulma.min.css';
 
-  button {
-    height: 50px;
-    flex: 0 0 100px;
-  }
-
-  button.tab-btn-selected {
-    background-color: white;
-  }
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: bold;
 }
 
-div:not(.tab-visible) {
-  display: none;
+h1 {
+  font-size: xx-large;
+}
+
+h2 {
+  font-size: x-large;
+}
+
+h3 {
+  font-size: larger;
+}
+
+h4 {
+  font-size: large;
+}
+
+h5 {
+  font-size: medium;
+}
+
+#options {
+  div.tab:not(.tab-visible) {
+    display: none;
+  }
 }
