@@ -17,7 +17,9 @@ function urlToDomain(url: string): string {
 }
 
 function isDomainValid(domain: string): boolean {
-  return !!domain && !!domain.match(/^([a-z0-9]+\.)?([a-z0-9]+\.[a-z0-9]+)$/);
+  return (
+    !!domain && !!domain.match(/^([a-z0-9-\_\]+\.)?([a-z0-9-\_\]+\.[a-z0-9]+)$/)
+  );
 }
 
 function urlIsChromeExtensions(url: string): boolean {

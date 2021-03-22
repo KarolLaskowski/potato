@@ -126,6 +126,28 @@ test('isDomainValid returns true when given domain URL with subdomain', () => {
   expect(result).toBe(true);
 });
 
+test('isDomainValid returns true when given domain URL with hyphen', () => {
+  // arrange
+  let domain = 'domain-example.com';
+
+  //act
+  let result = Helpers.isDomainValid(domain);
+
+  //assert
+  expect(result).toBe(true);
+});
+
+test('isDomainValid returns true when given domain URL with dash', () => {
+  // arrange
+  let domain = 'domain_example.com';
+
+  //act
+  let result = Helpers.isDomainValid(domain);
+
+  //assert
+  expect(result).toBe(true);
+});
+
 test('isDomainValid returns true when given valid domain URL', () => {
   // arrange
   let domain = 'example.com';
