@@ -1,8 +1,4 @@
-#tab-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+@import '~bulma/css/bulma.min.css';
 
   button {
     height: 50px;

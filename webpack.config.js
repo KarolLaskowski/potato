@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const mode =
   process.env.NODE_ENV === 'production' ? 'production' : 'development';
@@ -10,7 +11,6 @@ module.exports = {
   entry: {
     background: './src/js/background.ts',
     options: './src/js/options.ts',
-    optionsCss: '/src/scss/options.scss',
   },
   devtool: 'source-map',
   module: {
@@ -28,19 +28,17 @@ module.exports = {
         },
       },
       {
-        test: /\.scss$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: { outputPath: './css/', name: '[name].css' },
-          },
-          'sass-loader',
-        ],
+        test: /\.(eot|ttf|woff2?|otf)$/,
+        use: ['file-loader'],
+      },
+      {
+        test: /\.(scss|css)$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({ filename: './css/[name].css' }),
     new CopyPlugin({
       patterns: [
         { from: 'src/html', to: 'html' },
