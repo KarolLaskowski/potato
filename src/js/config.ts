@@ -1,15 +1,15 @@
-import { TimeStamp } from './common';
+import {
+  IPageAndSpentTime,
+  ITableColumnSchema,
+  TableColumnType,
+  TimeStamp,
+} from './common';
 import Helpers from './helpers';
 import { Page } from './pages';
 import PagesStore from './pagesStore';
+import TableHelper from './tableHelper';
 
 let pagesStore: PagesStore = new PagesStore();
-
-interface IPageAndSpentTime {
-  nr: number;
-  domain: string;
-  spentTime: TimeStamp;
-}
 
 async function getPagesWithVisits() {
   const pages: any = await pagesStore.all();
@@ -29,22 +29,6 @@ async function getPagesWithVisits() {
     .reverse();
 }
 
-function createCell(value: string): HTMLElement {
-  const $td: HTMLTableCellElement = document.createElement('td');
-  $td.innerText = value;
-  return $td;
-}
-
-function createRow(dataRow: IPageAndSpentTime): HTMLElement {
-  const $row: HTMLTableRowElement = document.createElement('tr');
-  $row.appendChild(createCell(dataRow.nr.toString()));
-  $row.appendChild(createCell(dataRow.domain));
-  $row.appendChild(
-    createCell(Helpers.timestampToLongString(dataRow.spentTime))
-  );
-  return $row;
-}
-
 function fillTableWithData(
   $table: Element,
   data: Array<IPageAndSpentTime>
@@ -57,7 +41,12 @@ function fillTableWithData(
     const $tbody = $tbodyCollection.item(0);
     $tbody.innerHTML = '';
     for (let i = 0; i < data.length; i++) {
-      $tbody.appendChild(createRow(data[i]));
+      const rowData: Array<ITableColumnSchema> = [
+        { value: data[i].nr.toString() },
+        { value: data[i].domain },
+        { value: Helpers.timestampToLongString(data[i].spentTime) },
+      ];
+      $tbody.appendChild(TableHelper.createRow(rowData));
     }
   }
 }

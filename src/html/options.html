@@ -61,42 +61,108 @@
     </div>
     <div id="tab-blocked-pages" class="tab">
       <section id="blocked-pages--table">
+        <form id="blocked-pages--form">
+          <table
+            id="blocked-pages"
+            class="table is-striped is-narrow is-hoverable"
+          >
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th>Time limit</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>wykop.pl</td>
+                <td>30 min</td>
+                <td>
+                  <button class="delete" type="submit"></button>
+                </td>
+              </tr>
+              <tr>
+                <td>onet.pl</td>
+                <td>3 hrs</td>
+                <td>
+                  <button class="delete" type="submit"></button>
+                </td>
+              </tr>
+              <tr>
+                <td>reddit.com</td>
+                <td>50 min</td>
+                <td>
+                  <button class="delete" type="submit"></button>
+                </td>
+              </tr>
+              <tr>
+                <td>facebook.com</td>
+                <td>35 min</td>
+                <td>
+                  <button class="delete" type="submit"></button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    id="blocked-page--url"
+                    class="input is-small"
+                    type="text"
+                    placeholder="Enter domain"
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    id="blocked-page--limit"
+                    class="input is-small"
+                    type="text"
+                    placeholder="Enter seconds"
+                    required
+                  />
+                </td>
+                <td>
+                  <button class="add" type="submit"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </section>
+    </div>
+    <div id="tab-allowed-pages" class="tab">
+      <section id="allowed-pages--table">
         <table
-          id="blocked-pages"
+          id="allowed-pages"
           class="table is-striped is-narrow is-hoverable"
         >
           <thead>
             <tr>
               <th>Address</th>
-              <th>Time limit</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>wykop.pl</td>
-              <td>30 min</td>
               <td>
                 <button class="delete"></button>
               </td>
             </tr>
             <tr>
               <td>onet.pl</td>
-              <td>3 hrs</td>
               <td>
                 <button class="delete"></button>
               </td>
             </tr>
             <tr>
               <td>reddit.com</td>
-              <td>50 min</td>
               <td>
                 <button class="delete"></button>
               </td>
             </tr>
             <tr>
               <td>facebook.com</td>
-              <td>35 min</td>
               <td>
                 <button class="delete"></button>
               </td>
@@ -104,32 +170,20 @@
             <tr>
               <td>
                 <input
-                  id="blocked-page--url"
+                  id="allowed-page--url"
                   class="input is-small"
                   type="text"
                   placeholder="Enter domain"
+                  required
                 />
               </td>
               <td>
-                <input
-                  id="blocked-page--limit"
-                  class="input is-small"
-                  type="text"
-                  placeholder="Enter seconds"
-                />
-              </td>
-              <td>
-                <span class="icon is-small" role="img" aria-label="icon"
-                  >➕</span
-                >
+                <button class="add"></button>
               </td>
             </tr>
           </tbody>
         </table>
       </section>
-    </div>
-    <div id="tab-allowed-pages" class="tab">
-      <h3>Allowed pages</h3>
     </div>
     <div id="tab-options" class="tab">
       <h3>Options</h3>

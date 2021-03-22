@@ -33,3 +33,53 @@ h5 {
     display: none;
   }
 }
+
+.add {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(76, 175, 80, 0.8);
+  border: none;
+  border-radius: 290486px;
+  cursor: pointer;
+  pointer-events: auto;
+  display: inline-block;
+  flex: 0 0 0;
+  height: 20px;
+  max-height: 20px;
+  max-width: 20px;
+  min-height: 20px;
+  min-width: 20px;
+  outline: 0;
+  position: relative;
+  vertical-align: top;
+  width: 20px;
+}
+.add::before,
+.add::after {
+  background-color: #fff;
+  content: '';
+  display: block;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  transform-origin: center center;
+}
+
+.add::after {
+  height: 50%;
+  width: 2px;
+}
+.add::before {
+  height: 2px;
+  width: 50%;
+}
+
+.add:hover {
+  background-color: rgba(76, 175, 80, 1);
+}
