@@ -8,7 +8,6 @@ import Helpers from './helpers';
 function createDeleteButton(id: string): HTMLButtonElement {
   const $button: HTMLButtonElement = document.createElement('button');
   $button.setAttribute('data-id', id || '');
-  $button.setAttribute('type', 'submit');
   $button.classList.add('delete');
   return $button;
 }

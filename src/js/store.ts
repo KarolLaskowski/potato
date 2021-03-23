@@ -33,13 +33,11 @@ class Store implements IStore {
     return Object.keys(this._storeData).length;
   };
 
-  get = async (key: string = null): Promise<IKeyValueObject> => {
+  get = async (): Promise<IKeyValueObject> => {
     if (!this.count()) {
       await this._sync();
     }
-    return ((!!key && this._storeData[key]) ||
-      this._storeData ||
-      {}) as IKeyValueObject;
+    return (this._storeData || {}) as IKeyValueObject;
   };
 
   save = async (newStoreData: IKeyValueObject) => {

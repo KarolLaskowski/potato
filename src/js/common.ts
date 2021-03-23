@@ -34,6 +34,23 @@ interface IStore {
   count(): number;
 }
 
+interface IBlockedPage {
+  domain: string;
+  timeLimit: number;
+}
+
+interface IAllowedPage {
+  domain: string;
+}
+
+interface Action<T> {
+  (item: T): void;
+}
+
+interface Func<T, TResult> {
+  (item: T): TResult;
+}
+
 export {
   Consts,
   TimeStamp,
@@ -43,4 +60,8 @@ export {
   SubmitEvent,
   IStore,
   IKeyValueObject,
+  IBlockedPage,
+  IAllowedPage,
+  Action,
+  Func,
 };

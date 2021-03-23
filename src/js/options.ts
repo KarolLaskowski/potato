@@ -1,13 +1,10 @@
-import { TabStatus } from './enums';
-import Helpers from './helpers';
 import {
-  Consts,
+  IBlockedPage,
+  IKeyValueObject,
   ITableColumnSchema,
   SubmitEvent,
   TableColumnType,
-  TimeStamp,
 } from './common';
-import { PageHelper, PageVisit } from './pages';
 import Config from './config';
 import TableHelper from './tableHelper';
 import OptionsStore from './optionsStore';
@@ -121,14 +118,17 @@ function initTabButtons(): void {
   }
 }
 
-async function addBlockedPage() {
+async function addBlockedPage(e: SubmitEvent) {
+  e.preventDefault();
   const domain: string = $newBlockedPageUrl.value;
-  const timeLimit: string = $newBlockedPageTimeLimit.value;
-  const blockedPagesOptions: object = await optionsStore.get('blockedPages');
+  const timeLimit: number = Number($newBlockedPageTimeLimit.value);
+  const blockedPages: Array<IBlockedPage> = (await optionsStore.getOption(
+    'blockedPages'
+  )) as Array<IBlockedPage>;
   if ($blockedPagesTableBody) {
     const rowData: Array<ITableColumnSchema> = [
       { value: domain },
-      { value: timeLimit },
+      { value: timeLimit.toString() },
       { value: '', type: TableColumnType.DeleteButton },
     ];
     $blockedPagesTableBody.insertBefore(
@@ -136,20 +136,29 @@ async function addBlockedPage() {
       $blockedPagesTableBody.querySelectorAll('tr:last-child')[0]
     );
   }
+  blockedPages.push({ domain, timeLimit });
+  await optionsStore.setOption('blockedPages', blockedPages);
 }
 
-function removeBlockedPage($button: HTMLButtonElement): void {
-  const id = $button.getAttribute('data-id');
-  $button.closest('tr').remove();
-}
-
-function editBlockedPages(e: SubmitEvent): void {
-  e.preventDefault();
-  const $button: HTMLButtonElement = e.submitter as HTMLButtonElement;
-  if ($button.classList.contains('add')) {
-    addBlockedPage();
-  } else if ($button.classList.contains('delete')) {
-    removeBlockedPage($button);
+async function removeBlockedPage(e: MouseEvent) {
+  const $button: HTMLButtonElement = e.target as HTMLButtonElement;
+  if ($button && $button.classList.contains('delete')) {
+    const $parentRow = $button.closest('tr');
+    const domain: string = ($parentRow.getElementsByClassName(
+      'domain'
+    )[0] as HTMLElement).innerText;
+    //const  = $button.getAttribute('data-id');
+    $parentRow.remove();
+    const blockedPages: Array<IBlockedPage> = (await optionsStore.getOption(
+      'blockedPages'
+    )) as Array<IBlockedPage>;
+    var removeIndex = blockedPages
+      .map(function (item) {
+        return item.domain;
+      })
+      .indexOf(domain);
+    blockedPages.splice(removeIndex, 1);
+    await optionsStore.setOption('blockedPages', blockedPages);
   }
 }
 
@@ -159,7 +168,8 @@ function onOptionsPageLoaded(): void {
   initHtmlElements();
   initTabButtons();
   renderDashboardTable();
-  $blockedPagesForm.addEventListener('submit', editBlockedPages);
+  $blockedPagesForm.addEventListener('click', removeBlockedPage);
+  $blockedPagesForm.addEventListener('submit', addBlockedPage);
 }
 
 document.addEventListener('DOMContentLoaded', onOptionsPageLoaded, false);
