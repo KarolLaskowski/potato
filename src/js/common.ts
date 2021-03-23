@@ -24,6 +24,16 @@ interface SubmitEvent extends Event {
   submitter: HTMLElement;
 }
 
+interface IKeyValueObject {
+  [key: string]: object;
+}
+
+interface IStore {
+  get(key: string): Promise<IKeyValueObject>;
+  save(newStoreData: IKeyValueObject): void;
+  count(): number;
+}
+
 export {
   Consts,
   TimeStamp,
@@ -31,4 +41,6 @@ export {
   TableColumnType,
   ITableColumnSchema,
   SubmitEvent,
+  IStore,
+  IKeyValueObject,
 };

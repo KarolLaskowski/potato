@@ -12,7 +12,7 @@ import TableHelper from './tableHelper';
 let pagesStore: PagesStore = new PagesStore();
 
 async function getPagesWithVisits() {
-  const pages: any = await pagesStore.all();
+  const pages: any = await pagesStore.get();
   const domains: Array<string> = Object.keys(pages);
   const now: TimeStamp = new Date().getTime();
   return domains

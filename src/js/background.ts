@@ -1,7 +1,7 @@
 import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge';
 import Helpers from './helpers';
-import { Consts, TimeStamp } from './common';
+import { Consts, IKeyValueObject, TimeStamp } from './common';
 import { Page, PageHelper, PageVisit } from './pages';
 import Config from './config';
 import PagesStore from './pagesStore';
@@ -12,7 +12,7 @@ let badgeRefreshInterval: number;
 let pagesStore: PagesStore;
 
 function getPages(): any {
-  return pagesStore.all();
+  return pagesStore.get();
 }
 
 function getIndexSeconds(): number {
@@ -20,7 +20,7 @@ function getIndexSeconds(): number {
 }
 
 function getPageSpentTime(domain: string): number {
-  const pages: any = pagesStore.all();
+  const pages: any = pagesStore.get();
   if (
     Helpers.isDomainValid(domain) &&
     !!pages[domain] &&
@@ -36,7 +36,7 @@ function getHistoryLog(): void {
 }
 
 function initAllTabs(allTabs: Array<any>): void {
-  const pages: object = {};
+  const pages: IKeyValueObject = {};
   allTabs.forEach(tab => {
     const domain = Helpers.urlToDomain(tab.url);
     const firstOpenedPage = PageHelper.addPage(pages, domain);
@@ -50,7 +50,7 @@ function initAllTabs(allTabs: Array<any>): void {
 
 async function processChangeOfTab(selectedTab: chrome.tabs.Tab) {
   const pageChangedTime: Date = new Date();
-  const pages: any = await pagesStore.all();
+  const pages: any = await pagesStore.get();
   PageHelper.finishPageVisits(pages, pageChangedTime);
   let spentTimeOnNewTab: TimeStamp = 0;
   if (

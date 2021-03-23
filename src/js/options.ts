@@ -10,7 +10,9 @@ import {
 import { PageHelper, PageVisit } from './pages';
 import Config from './config';
 import TableHelper from './tableHelper';
+import OptionsStore from './optionsStore';
 import '../scss/options.scss';
+import PagesStore from './pagesStore';
 
 let $tabButtons: Array<HTMLElement>;
 let $tabs: Array<HTMLElement>;
@@ -21,6 +23,9 @@ let $newBlockedPageUrl: HTMLInputElement;
 let $newBlockedPageTimeLimit: HTMLInputElement;
 let $allowedPagesTableBody: HTMLElement;
 let $newAllowedPageUrl: HTMLInputElement;
+
+let optionsStore: OptionsStore;
+let pagesStore: PagesStore;
 
 function initDashboardHtmlElements(): void {
   $dashboardTable = <HTMLTableElement>(
@@ -116,9 +121,10 @@ function initTabButtons(): void {
   }
 }
 
-function addBlockedPage(): void {
+async function addBlockedPage() {
   const domain: string = $newBlockedPageUrl.value;
   const timeLimit: string = $newBlockedPageTimeLimit.value;
+  const blockedPagesOptions: object = await optionsStore.get('blockedPages');
   if ($blockedPagesTableBody) {
     const rowData: Array<ITableColumnSchema> = [
       { value: domain },
@@ -148,6 +154,8 @@ function editBlockedPages(e: SubmitEvent): void {
 }
 
 function onOptionsPageLoaded(): void {
+  optionsStore = new OptionsStore();
+  pagesStore = new PagesStore();
   initHtmlElements();
   initTabButtons();
   renderDashboardTable();

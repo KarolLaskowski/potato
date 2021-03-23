@@ -2,7 +2,18 @@ import Helpers from './helpers';
 import { TabStatus } from './enums';
 import { TimeStamp } from './common';
 
-class PageVisit {
+interface IPageVisit {
+  to: Date;
+  from: Date;
+  status: TabStatus;
+  tabIndex: number;
+}
+
+interface IPage {
+  visits: Array<PageVisit>;
+}
+
+class PageVisit implements IPageVisit {
   to: Date;
   from: Date;
   status: TabStatus;
@@ -42,7 +53,7 @@ class PageVisit {
   };
 }
 
-class Page {
+class Page implements IPage {
   visits: Array<PageVisit>;
 
   constructor() {
@@ -133,4 +144,4 @@ const PageHelper = {
   finishPageVisits,
 };
 
-export { PageHelper, Page, PageVisit };
+export { IPageVisit, IPage, PageHelper, Page, PageVisit };
