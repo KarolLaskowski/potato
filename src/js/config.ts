@@ -1,14 +1,6 @@
-import {
-  IDomainTimePair,
-  IKeyValueObject,
-  TableData,
-  TableRowData,
-  TimeStamp,
-} from './types';
-import { IPageAndSpentTime, ITableColumnSchema } from './types';
+import { IDomainTimePair, IKeyValueObject, TimeStamp } from './types';
 import Helpers from './helpers';
 import PagesStore from './pagesStore';
-import TableHelper from './tableHelper';
 import { Page } from './pages';
 
 let pagesStore: PagesStore = new PagesStore();
@@ -33,33 +25,8 @@ async function getPagesWithVisits() {
     });
 }
 
-// function fillTableWithData(
-//   $table: Element,
-//   data: Array<IPageAndSpentTime>
-// ): void {
-//   if (!$table) {
-//     throw TypeError('Table element not found');
-//   }
-//   const $tbodyCollection: HTMLCollection = $table.getElementsByTagName('tbody');
-//   if ($tbodyCollection) {
-//     const $tbody = $tbodyCollection.item(0);
-//     $tbody.innerHTML = '';
-//     for (let i = 0; i < data.length; i++) {
-//       const rowData: Array<ITableColumnSchema> = [
-//         { value: data[i].nr.toString() },
-//         { value: data[i].domain },
-//         { value: Helpers.timestampToLongString(data[i].spentTime) },
-//       ];
-//       $tbody.appendChild(TableHelper.createRow(rowData));
-//     }
-//   }
-// }
-
 const Config = {
   getPagesWithVisits,
-  // DOM: {
-  //   fillTableWithData,
-  // },
 };
 
 export default Config;

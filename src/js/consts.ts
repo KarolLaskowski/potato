@@ -4,6 +4,11 @@ const Consts = {
   badgeRefreshIntervalTimeInMs: 1000,
 };
 
+const StoreKeys = {
+  BlockedPages: 'blockedPages',
+  AllowedPages: 'allowedPages',
+};
+
 const TableSchemas = {
   BlockedPages: [
     {
@@ -32,4 +37,4 @@ const TableSchemas = {
   ],
 };
 
-export { Consts, TableSchemas };
+export { Consts, TableSchemas, StoreKeys };

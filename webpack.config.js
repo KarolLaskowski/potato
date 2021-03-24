@@ -10,7 +10,7 @@ module.exports = {
   target: 'node',
   entry: {
     background: './src/js/background.ts',
-    options: './src/js/options.ts',
+    options: './src/js/optionsView.ts',
   },
   devtool: 'source-map',
   module: {

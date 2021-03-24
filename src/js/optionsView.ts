@@ -1,19 +1,15 @@
-import {
-  IDomainTimePair,
-  IKeyValueObject,
-  ITableColumnSchema,
-  SubmitEvent,
-  TableRowData,
-} from './types';
-import { TableColumnType } from './enums';
+import { IDomainTimePair, SubmitEvent } from './types';
 import Config from './config';
 import TableHelper from './tableHelper';
 import OptionsStore from './optionsStore';
 import '../scss/options.scss';
-import PagesStore from './pagesStore';
-import { TableData, TableSchema } from './types';
-import { TableSchemas } from './consts';
-import Helpers from './helpers';
+import { TableData } from './types';
+import { StoreKeys, TableSchemas } from './consts';
+import {
+  addConfiguredPage,
+  mapConfiguredPageToTableRowData,
+  removeConfiguredPage,
+} from './options/pagesTables';
 
 let $tabButtons: Array<HTMLElement>;
 let $tabs: Array<HTMLElement>;
@@ -27,7 +23,6 @@ let $allowedPagesTableBody: HTMLElement;
 let $newAllowedPageUrl: HTMLInputElement;
 
 let optionsStore: OptionsStore;
-let pagesStore: PagesStore;
 
 function initDashboardHtmlElements(): void {
   $dashboardTable = <HTMLTableElement>(
@@ -124,7 +119,8 @@ function initTabButtons(): void {
 function addBlockedPage(e: SubmitEvent) {
   e.preventDefault();
   addConfiguredPage(
-    'blockedPages',
+    optionsStore,
+    StoreKeys.BlockedPages,
     $blockedPagesTableBody,
     TableSchemas.BlockedPages,
     $newBlockedPageUrl,
@@ -135,7 +131,8 @@ function addBlockedPage(e: SubmitEvent) {
 function addAllowedPage(e: SubmitEvent) {
   e.preventDefault();
   addConfiguredPage(
-    'allowedPages',
+    optionsStore,
+    StoreKeys.AllowedPages,
     $allowedPagesTableBody,
     TableSchemas.AllowedPages,
     $newAllowedPageUrl,
@@ -143,80 +140,17 @@ function addAllowedPage(e: SubmitEvent) {
   );
 }
 
-async function addConfiguredPageToStore(
-  optionsKey: string,
-  addedPage: IDomainTimePair
-) {
-  const configuredPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
-    optionsKey
-  )) || []) as Array<IDomainTimePair>;
-  configuredPages.push(addedPage);
-  await optionsStore.setOption(optionsKey, configuredPages);
-}
-
-function addConfiguredPage(
-  optionsKey: string,
-  $configuredPagesTableBody: HTMLElement,
-  tableSchema: TableSchema,
-  $inputPageUrl: HTMLInputElement,
-  $inputPageTimeLimit: HTMLInputElement = null
-) {
-  const addedPage: IDomainTimePair = {
-    domain: $inputPageUrl.value,
-    time: $inputPageTimeLimit ? Number($inputPageTimeLimit.value) : undefined,
-  };
-  TableHelper.addConfiguredPageToTable(
-    $configuredPagesTableBody,
-    tableSchema,
-    addedPage
-  );
-  addConfiguredPageToStore(optionsKey, addedPage);
-  resetInputsAfterAddedPage($inputPageUrl, $inputPageTimeLimit);
-}
-
-function resetInputsAfterAddedPage(
-  $inputPageUrl: HTMLInputElement,
-  $inputPageTimeLimit: HTMLInputElement = null
-) {
-  $inputPageUrl.value = '';
-  if ($inputPageTimeLimit) {
-    $inputPageTimeLimit.value = '';
-  }
-  $inputPageUrl.focus();
-}
-
-async function removeConfiguredPage(
-  optionsKey: string,
-  $button: HTMLButtonElement
-) {
-  const $parentRow = $button.closest('tr');
-  const domain: string = ($parentRow.getElementsByClassName(
-    'domain'
-  )[0] as HTMLElement).innerText;
-  $parentRow.remove();
-  const configuredPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
-    optionsKey
-  )) || []) as Array<IDomainTimePair>;
-  var removeIndex = configuredPages
-    .map(function (item) {
-      return item.domain;
-    })
-    .indexOf(domain);
-  configuredPages.splice(removeIndex, 1);
-  await optionsStore.setOption(optionsKey, configuredPages);
-}
-
 async function removeBlockedPage(e: MouseEvent) {
   const $button: HTMLButtonElement = e.target as HTMLButtonElement;
   if ($button && $button.classList.contains('delete')) {
-    removeConfiguredPage('blockedPages', $button);
+    removeConfiguredPage(optionsStore, StoreKeys.BlockedPages, $button);
   }
 }
 
 async function removeAllowedPage(e: MouseEvent) {
   const $button: HTMLButtonElement = e.target as HTMLButtonElement;
   if ($button && $button.classList.contains('delete')) {
-    removeConfiguredPage('allowedPages', $button);
+    removeConfiguredPage(optionsStore, StoreKeys.AllowedPages, $button);
   }
 }
 
@@ -230,22 +164,9 @@ async function renderDashboardTable() {
   );
 }
 
-function mapConfiguredPageToTableRowData(
-  configuredPages: Array<IDomainTimePair>
-): TableData {
-  return configuredPages.map(p => {
-    const result: TableRowData = [];
-    result.push(p.domain);
-    if (p.time) {
-      result.push(Helpers.secondsToHrsMinSecString(p.time));
-    }
-    return result;
-  });
-}
-
 async function renderBlockedPagesTable() {
   const blockedPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
-    'blockedPages'
+    StoreKeys.BlockedPages
   )) || []) as Array<IDomainTimePair>;
   const blockedPagesData: TableData = mapConfiguredPageToTableRowData(
     blockedPages
@@ -259,7 +180,7 @@ async function renderBlockedPagesTable() {
 
 async function renderAllowedPagesTable() {
   const allowedPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
-    'allowedPages'
+    StoreKeys.AllowedPages
   )) || []) as Array<IDomainTimePair>;
   const allowedPagesData: TableData = mapConfiguredPageToTableRowData(
     allowedPages
@@ -273,7 +194,6 @@ async function renderAllowedPagesTable() {
 
 function onOptionsPageLoaded(): void {
   optionsStore = new OptionsStore();
-  pagesStore = new PagesStore();
   initHtmlElements();
   initTabButtons();
   renderDashboardTable();

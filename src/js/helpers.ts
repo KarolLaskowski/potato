@@ -57,7 +57,9 @@ function secondsToHrsMinSecString(seconds: number = 0) {
   const sec: number = ~~(seconds % 60);
   const min: number = ~~((seconds % 3600) / 60);
   const hr: number = ~~(seconds / 3600);
-  return `${hr}:${min}:${sec}`;
+  const minString = min > 10 ? min : `0${min}`;
+  const secString = sec > 10 ? sec : `0${sec}`;
+  return `${hr}:${minString}:${secString}`;
 }
 
 const Helpers = {

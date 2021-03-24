@@ -192,3 +192,75 @@ test('urlIsChromeExtensions returns false when given regular URL', () => {
   //assert
   expect(result).toBe(false);
 });
+
+test('timestampToLongString returns long time string when given timestamp', () => {
+  // arrange
+  const timestamp = 1234567890;
+  const expected = '14 days, 6 hrs, 56 min, 7 sec';
+
+  //act
+  let result = Helpers.timestampToLongString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('timestampToLongString returns empty string when given timestamp = 0', () => {
+  // arrange
+  const timestamp = 0;
+  const expected = '';
+
+  //act
+  let result = Helpers.timestampToLongString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('timestampToLongString returns empty string when given null timestamp', () => {
+  // arrange
+  let timestamp = null;
+  const expected = '';
+
+  //act
+  let result = Helpers.timestampToLongString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('secondsToHrsMinSecString returns proper string when given seconds', () => {
+  // arrange
+  const timestamp = 12345;
+  const expected = '3:25:45';
+
+  //act
+  let result = Helpers.secondsToHrsMinSecString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('secondsToHrsMinSecString returns `0:00:00` string when given 0 seconds', () => {
+  // arrange
+  const timestamp = 0;
+  const expected = '0:00:00';
+
+  //act
+  let result = Helpers.secondsToHrsMinSecString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('secondsToHrsMinSecString returns `0:00:00` string when given null', () => {
+  // arrange
+  const timestamp: number = null;
+  const expected = '0:00:00';
+
+  //act
+  let result = Helpers.secondsToHrsMinSecString(timestamp);
+
+  //assert
+  expect(result).toBe(expected);
+});
