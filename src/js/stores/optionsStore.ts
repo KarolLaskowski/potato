@@ -1,4 +1,4 @@
-import { IKeyValueObject } from './types';
+import { IKeyValueObject } from '../types/types';
 import { Sync } from './storage';
 import Store from './store';
 

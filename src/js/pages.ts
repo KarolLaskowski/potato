@@ -1,7 +1,7 @@
-import Helpers from './helpers';
-import { TabStatus } from './enums';
-import { IKeyValueObject, IPage, IPageVisit } from './types';
-import { Page } from './classes/page';
+import Helpers from './helpers/helpers';
+import { TabStatus } from './types/enums';
+import { IKeyValueObject, IPage, IPageVisit } from './types/types';
+import { Page } from './types/classes/page';
 
 function addDomainAsPage(pages: IKeyValueObject, domain: string): Page {
   pages[domain] = new Page();

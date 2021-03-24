@@ -1,12 +1,12 @@
-import Helpers from '../helpers';
-import OptionsStore from '../optionsStore';
-import TableHelper from '../tableHelper';
+import Helpers from '../helpers/helpers';
+import OptionsStore from '../stores/optionsStore';
+import TableHelper from '../helpers/tableHelper';
 import {
   IDomainTimePair,
   TableData,
   TableRowData,
   TableSchema,
-} from '../types';
+} from '../types/types';
 
 async function addConfiguredPageToStore(
   optionsStore: OptionsStore,

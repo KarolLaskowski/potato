@@ -1,5 +1,5 @@
-import { Consts } from './consts';
-import Helpers from './helpers';
+import { Consts } from './types/consts';
+import Helpers from './helpers/helpers';
 
 let secondsCounter: number = 0;
 

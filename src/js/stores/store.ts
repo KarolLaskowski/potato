@@ -1,4 +1,4 @@
-import { IKeyValueObject, IStore } from './types';
+import { IKeyValueObject, IStore } from '../types/types';
 import { Sync } from './storage';
 
 class Store implements IStore {

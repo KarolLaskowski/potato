@@ -1,10 +1,10 @@
-import { IDomainTimePair, SubmitEvent } from './types';
+import { IDomainTimePair, SubmitEvent } from './types/types';
 import Config from './config';
-import TableHelper from './tableHelper';
-import OptionsStore from './optionsStore';
+import TableHelper from './helpers/tableHelper';
+import OptionsStore from './stores/optionsStore';
 import '../scss/options.scss';
-import { TableData } from './types';
-import { StoreKeys, TableSchemas } from './consts';
+import { TableData } from './types/types';
+import { StoreKeys, TableSchemas } from './types/consts';
 import {
   addConfiguredPage,
   mapConfiguredPageToTableRowData,

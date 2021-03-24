@@ -1,4 +1,4 @@
-import { IKeyValueObject } from './types';
+import { IKeyValueObject } from '../types/types';
 
 async function get(key: string, storage: chrome.storage.StorageArea) {
   if (key) {

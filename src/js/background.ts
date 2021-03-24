@@ -1,12 +1,12 @@
-import { BadgeColors, TabStatus } from './enums';
+import { BadgeColors, TabStatus } from './types/enums';
 import Badge from './badge';
-import Helpers from './helpers';
-import { IKeyValueObject, TimeStamp } from './types';
+import Helpers from './helpers/helpers';
+import { IKeyValueObject, TimeStamp } from './types/types';
 import { PageHelper } from './pages';
 import Config from './config';
-import PagesStore from './pagesStore';
-import { Sync } from './storage';
-import { Page } from './classes/page';
+import PagesStore from './stores/pagesStore';
+import { Sync } from './stores/storage';
+import { Page } from './types/classes/page';
 
 export let indexSeconds: number = 0;
 let badgeRefreshInterval: number;

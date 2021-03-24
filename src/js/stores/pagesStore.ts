@@ -1,9 +1,9 @@
-import { IKeyValueObject, IPage, IPageVisit } from './types';
+import { IKeyValueObject, IPage, IPageVisit } from '../types/types';
 import { Sync } from './storage';
 import Store from './store';
-import { PageVisit } from './classes/pageVisit';
-import { Page } from './classes/page';
-import { PageHelper } from './pages';
+import { PageVisit } from '../types/classes/pageVisit';
+import { Page } from '../types/classes/page';
+import { PageHelper } from '../pages';
 
 class PagesStore extends Store {
   constructor(newPages: IKeyValueObject = null) {

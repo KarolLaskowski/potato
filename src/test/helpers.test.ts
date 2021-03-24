@@ -1,4 +1,4 @@
-import Helpers from '../js/helpers';
+import Helpers from '../js/helpers/helpers';
 
 test('urlToDomain returns domain when given url', () => {
   // arrange

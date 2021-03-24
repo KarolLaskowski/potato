@@ -1,4 +1,4 @@
-import { TableColumnType } from './enums';
+import { TableColumnType } from '../types/enums';
 import Helpers from './helpers';
 import {
   IDomainTimePair,
@@ -6,7 +6,7 @@ import {
   TableData,
   TableRowData,
   TableSchema,
-} from './types';
+} from '../types/types';
 
 function createDeleteButton(id: string): HTMLButtonElement {
   const $button: HTMLButtonElement = document.createElement('button');

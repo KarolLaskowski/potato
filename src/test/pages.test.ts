@@ -1,5 +1,5 @@
-import { Page } from '../js/classes/page';
-import { PageVisit } from '../js/classes/pageVisit';
+import { Page } from '../js/types/classes/page';
+import { PageVisit } from '../js/types/classes/pageVisit';
 import { PageHelper } from '../js/pages';
 
 test('finishAndStartPageVisits stops all started visits when given domain and time', () => {
