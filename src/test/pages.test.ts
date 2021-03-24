@@ -1,5 +1,6 @@
-import { TabStatus } from '../js/enums';
-import { PageHelper, Page, PageVisit } from '../js/pages';
+import { Page } from '../js/classes/page';
+import { PageVisit } from '../js/classes/pageVisit';
+import { PageHelper } from '../js/pages';
 
 test('finishAndStartPageVisits stops all started visits when given domain and time', () => {
   // arrange
@@ -7,17 +8,17 @@ test('finishAndStartPageVisits stops all started visits when given domain and ti
   const domain2 = 'test.com';
   const pages: any = {};
   const visitStartedTime1 = new Date();
-  pages[domain1] = new Page();
-  pages[domain1].visits.push(new PageVisit(visitStartedTime1, null, null, 0));
+  const page: Page = (pages[domain1] = new Page());
+  page.visits.push(new PageVisit(visitStartedTime1, null, null, 0));
   const expected = visitStartedTime1.getTime();
 
   //act
   PageHelper.finishAndStartPageVisits(pages, domain2);
 
   //assert
-  expect(pages[domain1].visits[0].to).not.toBeFalsy();
-  expect(pages[domain1].visits[0].to.getTime()).toBeGreaterThan(expected - 5);
-  expect(pages[domain1].visits[0].to.getTime()).toBeLessThan(expected + 5);
+  expect(page.visits[0].to).not.toBeFalsy();
+  expect(page.visits[0].to.getTime()).toBeGreaterThan(expected - 5);
+  expect(page.visits[0].to.getTime()).toBeLessThan(expected + 5);
 });
 
 test('finishAndStartPageVisits adds new Page and PageVisit when given domain and time', () => {
@@ -33,11 +34,12 @@ test('finishAndStartPageVisits adds new Page and PageVisit when given domain and
   PageHelper.finishAndStartPageVisits(pages, domain2);
 
   //assert
-  expect(pages[domain2]).not.toBeUndefined();
-  expect(pages[domain2].visits).not.toBeUndefined();
-  expect(pages[domain2].visits).toHaveLength(1);
-  expect(pages[domain2].visits[0].from).toEqual(visitStartedTime1);
-  expect(pages[domain2].visits[0].to).toBeFalsy();
+  const page: Page = pages[domain2];
+  expect(page).not.toBeUndefined();
+  expect(page.visits).not.toBeUndefined();
+  expect(page.visits).toHaveLength(1);
+  expect(page.visits[0].from).toEqual(visitStartedTime1);
+  expect(page.visits[0].to).toBeFalsy();
 });
 
 test('getTotalSpentTime return sum of visits time when added 2 visits to Page entry', () => {

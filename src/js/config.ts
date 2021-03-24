@@ -1,7 +1,7 @@
 import { IDomainTimePair, IKeyValueObject, TimeStamp } from './types';
 import Helpers from './helpers';
 import PagesStore from './pagesStore';
-import { Page } from './pages';
+import { Page } from './classes/page';
 
 let pagesStore: PagesStore = new PagesStore();
 

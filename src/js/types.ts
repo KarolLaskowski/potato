@@ -1,4 +1,16 @@
-import { TableColumnType } from './enums';
+import { PageVisit } from './classes/pageVisit';
+import { TableColumnType, TabStatus } from './enums';
+
+interface IPageVisit {
+  to: Date;
+  from: Date;
+  status: TabStatus;
+  tabIndex: number;
+}
+
+interface IPage {
+  visits: Array<PageVisit>;
+}
 
 interface IPageAndSpentTime {
   nr: number;
@@ -48,6 +60,8 @@ type TableData = Array<TableRowData>;
 type TableSchema = Array<ITableColumnSchema>;
 
 export {
+  IPage,
+  IPageVisit,
   IPageAndSpentTime,
   ITableColumnSchema,
   SubmitEvent,
