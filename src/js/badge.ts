@@ -1,4 +1,4 @@
-import { Consts } from './common';
+import { Consts } from './consts';
 import Helpers from './helpers';
 
 let secondsCounter: number = 0;

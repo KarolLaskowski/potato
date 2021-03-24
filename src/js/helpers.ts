@@ -1,4 +1,4 @@
-import { TimeStamp } from './common';
+import { TimeStamp } from './types';
 
 function urlToDomain(url: string): string {
   let result;

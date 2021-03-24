@@ -1,10 +1,15 @@
-import { IKeyValueObject } from './common';
+import { IKeyValueObject } from './types';
 
 async function get(key: string, storage: chrome.storage.StorageArea) {
   if (key) {
     const p = new Promise<IKeyValueObject>(function (resolve, reject) {
       storage.get(key, function (result) {
-        resolve(JSON.parse(result[key]));
+        try {
+          resolve(JSON.parse(result[key]));
+        } catch (e) {
+          console.log(`key: ${key} not found in store!`);
+          resolve({});
+        }
       });
     });
     return await p;

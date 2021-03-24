@@ -1,4 +1,4 @@
-import { IKeyValueObject } from './common';
+import { IKeyValueObject } from './types';
 import { Sync } from './storage';
 import Store from './store';
 
@@ -8,21 +8,23 @@ class OptionsStore extends Store {
   }
 
   getOption = async (key: string): Promise<object> => {
-    if (!key) {
+    if (!!key) {
       if (!this.count()) {
         await this._sync();
       }
-      return (this._storeData || {}) as IKeyValueObject;
+      return this._storeData[key] as IKeyValueObject;
+    } else {
+      throw new TypeError('getOption: `key` cannot be empty!');
     }
-    throw new TypeError('`key` cannot be empty!');
   };
 
   setOption = async (key: string, value: object) => {
-    if (!key) {
+    if (!!key) {
       this._storeData[key] = value;
       await Sync.set(this._storeKeyName, this._storeData);
+    } else {
+      throw new TypeError('setOption: `key` cannot be empty!');
     }
-    throw new TypeError('`key` cannot be empty!');
   };
 }
 

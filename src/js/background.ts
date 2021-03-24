@@ -1,7 +1,8 @@
 import { BadgeColors, TabStatus } from './enums';
 import Badge from './badge';
 import Helpers from './helpers';
-import { Consts, IKeyValueObject, TimeStamp } from './common';
+import { Consts, TableSchemas } from './consts';
+import { IKeyValueObject, TimeStamp } from './types';
 import { Page, PageHelper, PageVisit } from './pages';
 import Config from './config';
 import PagesStore from './pagesStore';

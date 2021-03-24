@@ -1,6 +1,6 @@
 import Helpers from './helpers';
 import { TabStatus } from './enums';
-import { TimeStamp } from './common';
+import { TimeStamp } from './types';
 
 interface IPageVisit {
   to: Date;

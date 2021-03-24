@@ -1,11 +1,11 @@
-import { IKeyValueObject } from './common';
+import { IKeyValueObject } from './types';
 import { IPage, Page, PageHelper, IPageVisit, PageVisit } from './pages';
 import { Sync } from './storage';
 import Store from './store';
 
 class PagesStore extends Store {
-  constructor(newPages: object = null) {
-    super('pages');
+  constructor(newPages: IKeyValueObject = null) {
+    super('pages', newPages);
   }
 
   private _mapAsVisits(visits: Array<IPageVisit>): Array<PageVisit> {
@@ -25,7 +25,6 @@ class PagesStore extends Store {
       const domain: string = keysFromDb[i];
       const newPage: Page = PageHelper.addPage(pagesToReturn, domain);
       const pageInDb: IPage = dataFromDb[domain] as IPage;
-      //pagesToReturn[domain].visits = this._mapAsVisits(pageInDb.visits);
       newPage.visits = this._mapAsVisits(pageInDb.visits);
     }
     return pagesToReturn;

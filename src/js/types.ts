@@ -1,8 +1,4 @@
-const Consts = {
-  badgeRefreshIntervalTimeInMs: 1000,
-};
-
-type TimeStamp = number;
+import { TableColumnType } from './enums';
 
 interface IPageAndSpentTime {
   nr: number;
@@ -10,14 +6,10 @@ interface IPageAndSpentTime {
   spentTime?: TimeStamp;
 }
 
-enum TableColumnType {
-  DeleteButton,
-  Text,
-}
-
 interface ITableColumnSchema {
   value?: string;
   type?: TableColumnType;
+  class?: string;
 }
 
 interface SubmitEvent extends Event {
@@ -34,13 +26,9 @@ interface IStore {
   count(): number;
 }
 
-interface IBlockedPage {
+interface IDomainTimePair {
   domain: string;
-  timeLimit: number;
-}
-
-interface IAllowedPage {
-  domain: string;
+  time: number;
 }
 
 interface Action<T> {
@@ -51,17 +39,25 @@ interface Func<T, TResult> {
   (item: T): TResult;
 }
 
+type TimeStamp = number;
+
+type TableRowData = Array<string>;
+
+type TableData = Array<TableRowData>;
+
+type TableSchema = Array<ITableColumnSchema>;
+
 export {
-  Consts,
-  TimeStamp,
   IPageAndSpentTime,
-  TableColumnType,
   ITableColumnSchema,
   SubmitEvent,
   IStore,
   IKeyValueObject,
-  IBlockedPage,
-  IAllowedPage,
+  IDomainTimePair,
   Action,
   Func,
+  TimeStamp,
+  TableRowData,
+  TableData,
+  TableSchema,
 };

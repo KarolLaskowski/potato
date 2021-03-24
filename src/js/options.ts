@@ -1,15 +1,19 @@
 import {
-  IBlockedPage,
+  IDomainTimePair,
   IKeyValueObject,
   ITableColumnSchema,
   SubmitEvent,
-  TableColumnType,
-} from './common';
+  TableRowData,
+} from './types';
+import { TableColumnType } from './enums';
 import Config from './config';
 import TableHelper from './tableHelper';
 import OptionsStore from './optionsStore';
 import '../scss/options.scss';
 import PagesStore from './pagesStore';
+import { TableData, TableSchema } from './types';
+import { TableSchemas } from './consts';
+import Helpers from './helpers';
 
 let $tabButtons: Array<HTMLElement>;
 let $tabs: Array<HTMLElement>;
@@ -18,6 +22,7 @@ let $blockedPagesForm: HTMLFormElement;
 let $blockedPagesTableBody: HTMLElement;
 let $newBlockedPageUrl: HTMLInputElement;
 let $newBlockedPageTimeLimit: HTMLInputElement;
+let $allowedPagesForm: HTMLFormElement;
 let $allowedPagesTableBody: HTMLElement;
 let $newAllowedPageUrl: HTMLInputElement;
 
@@ -60,6 +65,9 @@ function initBlockedPagesHtmlElements(): void {
 }
 
 function initAllowedPagesHtmlElements(): void {
+  $allowedPagesForm = <HTMLFormElement>(
+    Array.from(document.querySelectorAll('form#allowed-pages--form'))[0]
+  );
   $allowedPagesTableBody = <HTMLElement>(
     Array.from(document.querySelectorAll('table#allowed-pages tbody'))[0]
   );
@@ -79,12 +87,7 @@ function initHtmlElements(): void {
   initAllowedPagesHtmlElements();
 }
 
-async function renderDashboardTable() {
-  const data = await Config.getPagesWithVisits();
-  Config.DOM.fillTableWithData($dashboardTable, data);
-}
-
-function selectButton(
+function selectTabButton(
   $clickedBtn: HTMLElement,
   $tabButtons: Array<HTMLElement>
 ): void {
@@ -107,7 +110,7 @@ function selectTab(tabId: string, $tabs: Array<HTMLElement>): void {
 function openTab(e: MouseEvent): void {
   e.preventDefault();
   const $clickedBtn: HTMLElement = this as HTMLElement;
-  selectButton($clickedBtn, $tabButtons);
+  selectTabButton($clickedBtn, $tabButtons);
   const tabId: string = $clickedBtn.getAttribute('data-for');
   selectTab(tabId, $tabs);
 }
@@ -118,48 +121,154 @@ function initTabButtons(): void {
   }
 }
 
-async function addBlockedPage(e: SubmitEvent) {
+function addBlockedPage(e: SubmitEvent) {
   e.preventDefault();
-  const domain: string = $newBlockedPageUrl.value;
-  const timeLimit: number = Number($newBlockedPageTimeLimit.value);
-  const blockedPages: Array<IBlockedPage> = (await optionsStore.getOption(
-    'blockedPages'
-  )) as Array<IBlockedPage>;
-  if ($blockedPagesTableBody) {
-    const rowData: Array<ITableColumnSchema> = [
-      { value: domain },
-      { value: timeLimit.toString() },
-      { value: '', type: TableColumnType.DeleteButton },
-    ];
-    $blockedPagesTableBody.insertBefore(
-      TableHelper.createRow(rowData),
-      $blockedPagesTableBody.querySelectorAll('tr:last-child')[0]
-    );
+  addConfiguredPage(
+    'blockedPages',
+    $blockedPagesTableBody,
+    TableSchemas.BlockedPages,
+    $newBlockedPageUrl,
+    $newBlockedPageTimeLimit
+  );
+}
+
+function addAllowedPage(e: SubmitEvent) {
+  e.preventDefault();
+  addConfiguredPage(
+    'allowedPages',
+    $allowedPagesTableBody,
+    TableSchemas.AllowedPages,
+    $newAllowedPageUrl,
+    null
+  );
+}
+
+async function addConfiguredPageToStore(
+  optionsKey: string,
+  addedPage: IDomainTimePair
+) {
+  const configuredPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
+    optionsKey
+  )) || []) as Array<IDomainTimePair>;
+  configuredPages.push(addedPage);
+  await optionsStore.setOption(optionsKey, configuredPages);
+}
+
+function addConfiguredPage(
+  optionsKey: string,
+  $configuredPagesTableBody: HTMLElement,
+  tableSchema: TableSchema,
+  $inputPageUrl: HTMLInputElement,
+  $inputPageTimeLimit: HTMLInputElement = null
+) {
+  const addedPage: IDomainTimePair = {
+    domain: $inputPageUrl.value,
+    time: $inputPageTimeLimit ? Number($inputPageTimeLimit.value) : undefined,
+  };
+  TableHelper.addConfiguredPageToTable(
+    $configuredPagesTableBody,
+    tableSchema,
+    addedPage
+  );
+  addConfiguredPageToStore(optionsKey, addedPage);
+  resetInputsAfterAddedPage($inputPageUrl, $inputPageTimeLimit);
+}
+
+function resetInputsAfterAddedPage(
+  $inputPageUrl: HTMLInputElement,
+  $inputPageTimeLimit: HTMLInputElement = null
+) {
+  $inputPageUrl.value = '';
+  if ($inputPageTimeLimit) {
+    $inputPageTimeLimit.value = '';
   }
-  blockedPages.push({ domain, timeLimit });
-  await optionsStore.setOption('blockedPages', blockedPages);
+  $inputPageUrl.focus();
+}
+
+async function removeConfiguredPage(
+  optionsKey: string,
+  $button: HTMLButtonElement
+) {
+  const $parentRow = $button.closest('tr');
+  const domain: string = ($parentRow.getElementsByClassName(
+    'domain'
+  )[0] as HTMLElement).innerText;
+  $parentRow.remove();
+  const configuredPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
+    optionsKey
+  )) || []) as Array<IDomainTimePair>;
+  var removeIndex = configuredPages
+    .map(function (item) {
+      return item.domain;
+    })
+    .indexOf(domain);
+  configuredPages.splice(removeIndex, 1);
+  await optionsStore.setOption(optionsKey, configuredPages);
 }
 
 async function removeBlockedPage(e: MouseEvent) {
   const $button: HTMLButtonElement = e.target as HTMLButtonElement;
   if ($button && $button.classList.contains('delete')) {
-    const $parentRow = $button.closest('tr');
-    const domain: string = ($parentRow.getElementsByClassName(
-      'domain'
-    )[0] as HTMLElement).innerText;
-    //const  = $button.getAttribute('data-id');
-    $parentRow.remove();
-    const blockedPages: Array<IBlockedPage> = (await optionsStore.getOption(
-      'blockedPages'
-    )) as Array<IBlockedPage>;
-    var removeIndex = blockedPages
-      .map(function (item) {
-        return item.domain;
-      })
-      .indexOf(domain);
-    blockedPages.splice(removeIndex, 1);
-    await optionsStore.setOption('blockedPages', blockedPages);
+    removeConfiguredPage('blockedPages', $button);
   }
+}
+
+async function removeAllowedPage(e: MouseEvent) {
+  const $button: HTMLButtonElement = e.target as HTMLButtonElement;
+  if ($button && $button.classList.contains('delete')) {
+    removeConfiguredPage('allowedPages', $button);
+  }
+}
+
+async function renderDashboardTable() {
+  const tableData: TableData = await Config.getPagesWithVisits();
+
+  TableHelper.addRowsToTable(
+    $dashboardTable,
+    TableSchemas.DashboardPage,
+    tableData
+  );
+}
+
+function mapConfiguredPageToTableRowData(
+  configuredPages: Array<IDomainTimePair>
+): TableData {
+  return configuredPages.map(p => {
+    const result: TableRowData = [];
+    result.push(p.domain);
+    if (p.time) {
+      result.push(Helpers.secondsToHrsMinSecString(p.time));
+    }
+    return result;
+  });
+}
+
+async function renderBlockedPagesTable() {
+  const blockedPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
+    'blockedPages'
+  )) || []) as Array<IDomainTimePair>;
+  const blockedPagesData: TableData = mapConfiguredPageToTableRowData(
+    blockedPages
+  );
+  TableHelper.addRowsToTable(
+    $blockedPagesTableBody,
+    TableSchemas.BlockedPages,
+    blockedPagesData
+  );
+}
+
+async function renderAllowedPagesTable() {
+  const allowedPages: Array<IDomainTimePair> = ((await optionsStore.getOption(
+    'allowedPages'
+  )) || []) as Array<IDomainTimePair>;
+  const allowedPagesData: TableData = mapConfiguredPageToTableRowData(
+    allowedPages
+  );
+  TableHelper.addRowsToTable(
+    $allowedPagesTableBody,
+    TableSchemas.AllowedPages,
+    allowedPagesData
+  );
 }
 
 function onOptionsPageLoaded(): void {
@@ -168,8 +277,12 @@ function onOptionsPageLoaded(): void {
   initHtmlElements();
   initTabButtons();
   renderDashboardTable();
+  renderBlockedPagesTable();
+  renderAllowedPagesTable();
   $blockedPagesForm.addEventListener('click', removeBlockedPage);
+  $allowedPagesForm.addEventListener('click', removeAllowedPage);
   $blockedPagesForm.addEventListener('submit', addBlockedPage);
+  $allowedPagesForm.addEventListener('submit', addAllowedPage);
 }
 
 document.addEventListener('DOMContentLoaded', onOptionsPageLoaded, false);

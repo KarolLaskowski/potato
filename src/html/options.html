@@ -47,7 +47,6 @@
         <table id="pages" class="table is-striped is-narrow is-hoverable">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Address</th>
               <th>Time spent</th>
             </tr>
@@ -74,35 +73,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="domain">wykop.pl</td>
-                <td>30 min</td>
-                <td>
-                  <button class="delete"></button>
-                </td>
-              </tr>
-              <tr>
-                <td class="domain">onet.pl</td>
-                <td>3 hrs</td>
-                <td>
-                  <button class="delete"></button>
-                </td>
-              </tr>
-              <tr>
-                <td class="domain">reddit.com</td>
-                <td>50 min</td>
-                <td>
-                  <button class="delete"></button>
-                </td>
-              </tr>
-              <tr>
-                <td class="domain">facebook.com</td>
-                <td>35 min</td>
-                <td>
-                  <button class="delete"></button>
-                </td>
-              </tr>
-              <tr>
+              <tr class="editing">
                 <td>
                   <input
                     id="blocked-page--url"
@@ -110,6 +81,7 @@
                     type="text"
                     placeholder="Enter domain"
                     required
+                    tabindex="1"
                   />
                 </td>
                 <td>
@@ -119,6 +91,7 @@
                     type="text"
                     placeholder="Enter seconds"
                     required
+                    tabindex="2"
                   />
                 </td>
                 <td>
@@ -132,57 +105,36 @@
     </div>
     <div id="tab-allowed-pages" class="tab">
       <section id="allowed-pages--table">
-        <table
-          id="allowed-pages"
-          class="table is-striped is-narrow is-hoverable"
-        >
-          <thead>
-            <tr>
-              <th>Address</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>wykop.pl</td>
-              <td>
-                <button class="delete"></button>
-              </td>
-            </tr>
-            <tr>
-              <td>onet.pl</td>
-              <td>
-                <button class="delete"></button>
-              </td>
-            </tr>
-            <tr>
-              <td>reddit.com</td>
-              <td>
-                <button class="delete"></button>
-              </td>
-            </tr>
-            <tr>
-              <td>facebook.com</td>
-              <td>
-                <button class="delete"></button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <input
-                  id="allowed-page--url"
-                  class="input is-small"
-                  type="text"
-                  placeholder="Enter domain"
-                  required
-                />
-              </td>
-              <td>
-                <button class="add"></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <form id="allowed-pages--form">
+          <table
+            id="allowed-pages"
+            class="table is-striped is-narrow is-hoverable"
+          >
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="editing">
+                <td>
+                  <input
+                    id="allowed-page--url"
+                    class="input is-small"
+                    type="text"
+                    placeholder="Enter domain"
+                    required
+                    tabindex="1"
+                  />
+                </td>
+                <td>
+                  <button class="add" type="submit"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
       </section>
     </div>
     <div id="tab-options" class="tab">
