@@ -62,6 +62,18 @@ function secondsToHrsMinSecString(seconds: number = 0) {
   return `${hr}:${minString}:${secString}`;
 }
 
+function hrsMinSecStringToSeconds(time: string = '0:00:00'): number {
+  const timeParts = time.split(':').map(p => +p);
+  const hrs: number = timeParts[0],
+    min: number = timeParts[1],
+    sec: number = timeParts[2];
+  if (hrs < 24 && min < 60 && sec < 60) {
+    return (hrs * 60 + min) * 60 + sec;
+  } else {
+    throw TypeError('Invalid time format!');
+  }
+}
+
 const Helpers = {
   urlToDomain,
   isDomainValid,
@@ -69,6 +81,7 @@ const Helpers = {
   urlIsChromeExtensions,
   timestampToLongString,
   secondsToHrsMinSecString,
+  hrsMinSecStringToSeconds,
 };
 
 export default Helpers;

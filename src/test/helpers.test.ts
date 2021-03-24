@@ -264,3 +264,38 @@ test('secondsToHrsMinSecString returns `0:00:00` string when given null', () => 
   //assert
   expect(result).toBe(expected);
 });
+
+test('hrsMinSecStringToSeconds returns 0 seconds when given `0:00:00`', () => {
+  // arrange
+  const string = '0:00:00';
+  const expected = 0;
+
+  //act
+  let result = Helpers.hrsMinSecStringToSeconds(string);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('hrsMinSecStringToSeconds returns 12345 seconds when given `3:25:45`', () => {
+  // arrange
+  const string = '3:25:45';
+  const expected = 12345;
+
+  //act
+  let result = Helpers.hrsMinSecStringToSeconds(string);
+
+  //assert
+  expect(result).toBe(expected);
+});
+
+test('hrsMinSecStringToSeconds throws exception when given `25:77:88`', () => {
+  // arrange
+  const string = '25:77:88';
+
+  //act
+  //assert
+  expect(() => {
+    Helpers.hrsMinSecStringToSeconds(string);
+  }).toThrow(TypeError);
+});

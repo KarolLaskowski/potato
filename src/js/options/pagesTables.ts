@@ -30,7 +30,9 @@ function addConfiguredPage(
 ) {
   const addedPage: IDomainTimePair = {
     domain: $inputPageUrl.value,
-    time: $inputPageTimeLimit ? Number($inputPageTimeLimit.value) : undefined,
+    time: $inputPageTimeLimit
+      ? Helpers.hrsMinSecStringToSeconds($inputPageTimeLimit.value)
+      : undefined,
   };
   TableHelper.addConfiguredPageToTable(
     $configuredPagesTableBody,
